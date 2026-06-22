@@ -22,6 +22,7 @@ const[menu,setmenu] = useState("home");
                 <div className="dot"></div>
             </div>
             <button>sign in</button>
+            
         </div>
       
     </div>
