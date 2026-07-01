@@ -18,6 +18,8 @@ connectDB();
 
 //api endpoints
 app.use("/api/food",foodRouter)
+//we can access files in the uploads folder by using http://localhost:4000/images/1782888736566food_20-CTe0fZJ7.png
+app.use("/images",express.static('uploads'))
 
 
 app.get("/",(req,res)=>{
