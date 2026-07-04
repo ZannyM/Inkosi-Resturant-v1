@@ -23,8 +23,14 @@
     padding: 8px 10px;
     border-radius: 3px 0px 0px 3px;
     cursor: pointer;
+     text-decoration: none;
+    color: inherit;
 }
 
+.sidebar-option.active {
+    background-color: #fff0ed;
+    border-color: tomato;
+}
 /* media query for a responsive website */
 @media (max-width:900px) {
     .sidebar-option p {
