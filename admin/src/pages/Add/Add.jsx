@@ -4,9 +4,9 @@ import { assets } from '../../assets/assets'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
-const Add = () => {
+const Add = ({ url }) => {
 
-    const apiUrl = "http://localhost:4000";
+    const apiUrl = url;
 
     //state variable
     const [image, setImage] = useState(false);
@@ -55,8 +55,8 @@ const Add = () => {
             }
         } catch (error) {
             console.error(error)
-            // toast.error(response?.data?.message || "Something went wrong")
-            toast.error(response.data.message)
+            const message = error?.response?.data?.message || "Something went wrong"
+            toast.error(message)
         }
     }
 
