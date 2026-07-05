@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import "./Add.css"
 import { assets } from '../../assets/assets'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const Add = () => {
 
@@ -49,9 +50,13 @@ const Add = () => {
             const response = await axios.post(`${apiUrl}/api/food/add`, formData);
             if (response?.data?.success) {
                 resetForm();
+                toast.success(response.data.message)
+                // toast.success(response.data.message)
             }
         } catch (error) {
             console.error(error)
+            // toast.error(response?.data?.message || "Something went wrong")
+            toast.error(response.data.message)
         }
     }
 
