@@ -3,6 +3,8 @@ import express from "express"
 import cors from "cors"
 import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/foodRoute.js"
+import userRouter from "./routes/userRoute.js"
+import 'dotenv/config'
 
 
 //app config
@@ -20,6 +22,7 @@ connectDB();
 app.use("/api/food",foodRouter)
 //we can access files in the uploads folder by using http://localhost:4000/images/1782888736566food_20-CTe0fZJ7.png
 app.use("/images",express.static('uploads'))
+app.use("/api/user",userRouter)
 
 
 app.get("/",(req,res)=>{
