@@ -4,11 +4,12 @@ import { assets } from '../../assets/assets'
 import { useEffect } from 'react'
 import { useContext } from 'react'
 import { StoreContext } from '../../context/StoreContext'
+import axios from 'axios'
 
 const LoginPopup = ({ setShowLogin }) => {
 
-//fetch the api
-    const {url} = useContext(StoreContext)
+    //fetch the api
+    const { url, setToken } = useContext(StoreContext)
 
     //we can switch to Loin and the state will change to login
     const [currState, setCurrState] = useState("Sign Up")
@@ -25,8 +26,24 @@ const LoginPopup = ({ setShowLogin }) => {
         setData(data => ({ ...data, [name]: value }))
     }
 
-    const onLogin = async(event) => {
+    //api call 
+    const onLogin = async (event) => {
         event.preventDefault()
+        let newUrl = url; //created a copy of the url
+        if (currState === "Login") {
+            newUrl += "/api/user/login"
+        } else {
+            newUrl += "/api/user/register"
+        }
+        const response = await axios.post(newUrl, data);
+
+        if (response.data.success) {
+            setToken(response.data.token);
+            localStorage.setItem("token", response.data.token);
+            setShowLogin(false)
+        }else{
+            alert(response.data.message);
+        }
 
     }
 
