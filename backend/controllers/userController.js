@@ -28,8 +28,6 @@ const loginUser = async (req, res) => {
     }
 
 
-
-
 }
 
 //data will be encrYPTED
