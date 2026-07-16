@@ -4,7 +4,7 @@ import userModel from '../models/userModel.js'
 //Placing user order from frontend
 const placeOrder = async (req, res) => {
 
-    const frontend_url = "http://localhost:5173"
+    const frontend_url = "http://localhost:5174"
 
     try {
         const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
