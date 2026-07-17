@@ -15,14 +15,12 @@ const MyOrders = () => {
     setData(response.data.data);
     // console.log(response.data.data);
   }
+  
   useEffect(() => {
     if (token) {
       fetchOrders();
     }
-
   }, [token])
-
-
 
   return (
     <div className='my-orders'>
@@ -48,7 +46,6 @@ const MyOrders = () => {
           )
         })}
       </div>
-
     </div>
   )
 }

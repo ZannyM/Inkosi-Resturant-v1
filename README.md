@@ -1,6 +1,11 @@
 # 🍽️ Restaurant Ordering System
 
 A full-stack restaurant ordering platform that connects customers, a backend database, payment integration, and an admin dashboard into one working system.
+'converting the repo to TypeScript'
+Tooling + config (both frontend and backend): 0.5–2 hours
+Batch renaming files: 0.1–0.5 hours (scripts/automation)
+Fixing runtime/type errors & adding types: 2–24+ hours depending on code complexity and strictness
+Full strict, well-typed migration: days (1–5+) for this multi-package repo
 
 > Status: 🚧 In active development — core ordering flow is functional, additional UI polish and features are in progress.
 
