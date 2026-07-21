@@ -1,5 +1,340 @@
-/* ===== Maison-style navbar ===== */
+/* Color & Styling Variables */
+:root {
+  --espresso: #141210;
+  --cream: #fbf9f5;
+  --gold: #d4af37;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --border-muted: rgba(255, 255, 255, 0.1);
+}
 
+/* Header Container Base Styles */
+.navbar-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 40;
+  transition: all 500ms ease;
+}
+
+/* State 1: Top of Home Page (Transparent) */
+.transparent-header {
+  background-color: transparent;
+  color: var(--cream);
+}
+
+/* State 2: Scrolled / Non-Home Page (Frosted Glass Effect) */
+.scrolled-header {
+  background-color: rgba(20, 18, 16, 0.8);
+  color: var(--cream);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-muted);
+}
+
+/* Inner Layout Flexbox */
+.navbar-container {
+  max-width: 1280px;
+  height: 80px; /* h-20 */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+@media (min-width: 768px) {
+  .navbar-container {
+    padding: 0 40px;
+  }
+}
+
+/* Logo */
+.navbar-logo {
+  font-family: var(--font-serif);
+  font-size: 1.5rem; /* text-2xl */
+  letter-spacing: -0.025em; /* tracking-tight */
+  color: inherit;
+  text-decoration: none;
+}
+
+.gold-dot {
+  color: var(--gold);
+}
+
+/* Desktop Menu Links */
+.navbar-links {
+  display: none;
+  align-items: center;
+  gap: 40px; /* gap-10 */
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .navbar-links {
+    display: flex;
+  }
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 200ms ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  opacity: 1;
+}
+
+/* Action Icon Buttons Wrapper */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* gap-2 */
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px; /* h-10 */
+  width: 40px;  /* w-10 */
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.account-link {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .account-link {
+    display: inline-flex;
+  }
+}
+
+.mobile-menu-btn {
+  display: inline-flex;
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-btn {
+    display: none;
+  }
+}
+
+/* Cart Icon Counter Badge */
+.cart-button {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  display: flex;
+  height: 20px;
+  min-width: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: var(--gold);
+  padding: 0 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--espresso);
+}
+
+/* Mobile Fullscreen Overlay */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: var(--espresso);
+  color: var(--cream);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms ease;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .mobile-overlay {
+    display: none;
+  }
+}
+
+.mobile-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-overlay-header {
+  display: flex;
+  height: 80px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.mobile-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-overlay-nav {
+  margin-top: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 0 24px;
+}
+
+.mobile-nav-link {
+  font-family: var(--font-serif);
+  font-size: 3rem; /* text-5xl */
+  color: inherit;
+  text-decoration: none;
+}
+/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap');
+
+
+:root {
+  --cream: #fbf9f5;
+  --gold: #d4af37;
+}
+
+.navbar-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 40;
+  background-color: transparent;
+  color: var(--cream);
+  transition: all 0.5s ease;
+}
+
+.navbar-container {
+  max-width: 1280px;
+  height: 80px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+@media (min-width: 768px) {
+  .navbar-container {
+    padding: 0 40px;
+  }
+}
+
+.navbar-logo {
+  font-family: serif;
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+  color: inherit;
+  text-decoration: none;
+}
+
+.gold-dot {
+  color: var(--gold);
+}
+
+.navbar-links {
+  display: none;
+  align-items: center;
+  gap: 40px;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .navbar-links {
+    display: flex;
+  }
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  opacity: 1;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.account-link {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .account-link {
+    display: inline-flex;
+  }
+}
+
+.mobile-menu-btn {
+  display: inline-flex;
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-btn {
+    display: none;
+  }
+} */
+
+
+/* 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap');
 
 :root {
@@ -20,8 +355,6 @@
 
 .navbar .logo {
     width: 130px;
-    /* If your logo asset is a dark mark, this flips it light for the dark bg.
-       If it's already light/white, remove this line. */
     filter: brightness(0) invert(1);
 }
 
@@ -51,7 +384,6 @@
     gap: 32px;
 }
 
-/* Restyle the search/basket/profile icon images for the dark bg */
 .navbar-right img {
     filter: brightness(0) invert(1);
     opacity: 0.85;
@@ -204,4 +536,4 @@
     .navbar-menu {
         display: none;
     }
-}
+} */
