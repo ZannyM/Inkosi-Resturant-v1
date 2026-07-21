@@ -9,28 +9,31 @@ import LoginPopup from './components/LoginPopup/LoginPopup'
 import Verify from './pages/Verify/Verify'
 import MyOrders from './pages/MyOrders/MyOrders'
 
-
 const App = () => {
-
   const [showLogin, setShowLogin] = useState(false)
 
   return (
     <>
-    {showLogin?<LoginPopup setShowLogin={setShowLogin} />:<></>}
-      <div className='app'>
+      {showLogin ? <LoginPopup setShowLogin={setShowLogin} /> : null}
+      
+      {/* Outer flex wrapper taking up at least 100vh height */}
+      <div className='app-container'>
         <Navbar setShowLogin={setShowLogin} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/order" element={<PlaceOrder />} />
-          <Route path='/verify' element={<Verify/>}/>
-          <Route path='/myorders' element={<MyOrders/>}/>
-        </Routes>
+
+        {/* Main route content constrained to 80% width and growing to fill vertical space */}
+        <div className='app'>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/order" element={<PlaceOrder />} />
+            <Route path='/verify' element={<Verify/>}/>
+            <Route path='/myorders' element={<MyOrders/>}/>
+          </Routes>
+        </div>
+
+        <Footer />
       </div>
-      <Footer />
     </>
-
-
   )
 }
 

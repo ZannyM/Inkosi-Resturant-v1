@@ -1,135 +1,207 @@
-.navbar{
-    padding: 20px 0px;
+/* ===== Maison-style navbar ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+    --bg-dark: #0d0b09;
+    --cream: #f5efe6;
+    --gold: #c9a15f;
+    --muted: rgba(245, 239, 230, 0.65);
+}
+
+.navbar {
+    padding: 24px 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--bg-dark);
+    font-family: 'Inter', sans-serif;
 }
-.navbar .logo{
-    width: 150px;
+
+.navbar .logo {
+    width: 130px;
+    /* If your logo asset is a dark mark, this flips it light for the dark bg.
+       If it's already light/white, remove this line. */
+    filter: brightness(0) invert(1);
 }
-.navbar-menu{
+
+.navbar-menu {
     display: flex;
     list-style: none;
-    gap: 20px;
-    color: #49557e;
-    font-size: 18px;
-
+    gap: 40px;
+    color: var(--cream);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
 }
-.navbar-right{
+
+.navbar-menu a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.navbar-menu a:hover {
+    color: var(--cream);
+}
+
+.navbar-right {
     display: flex;
     align-items: center;
-    gap: 40px;
-
+    gap: 32px;
 }
-.navbar button{
+
+/* Restyle the search/basket/profile icon images for the dark bg */
+.navbar-right img {
+    filter: brightness(0) invert(1);
+    opacity: 0.85;
+    transition: opacity 0.25s ease;
+}
+
+.navbar-right img:hover {
+    opacity: 1;
+}
+
+.navbar button {
     background: transparent;
-    font-size: 16px;
-    color: #49557e;
-    border: 1px solid tomato;
-    padding: 10px 30px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream);
+    border: 1px solid rgba(245, 239, 230, 0.3);
+    padding: 12px 32px;
     border-radius: 50px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.25s ease;
+}
 
+.navbar button:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background-color: transparent;
 }
-.navbar button:hover{
-    background-color: #fff4f2;
+
+.navbar .active {
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--gold);
+    color: var(--cream) !important;
 }
-.navbar .active{
-    padding-bottom: 2px;
-    border-bottom: 2px solid #49557e;
-}
-.navbar li{
+
+.navbar li {
     cursor: pointer;
 }
+
 .navbar-search-icon {
     position: relative;
 }
 
-.navbar-search-icon .dot{
+.navbar-search-icon .dot {
     position: absolute;
-    min-width: 10px;
-    min-height: 10px;
-    background-color: tomato;
-    border-radius: 5px;
-    top: -8px;
-    right: -8px;
+    min-width: 8px;
+    min-height: 8px;
+    background-color: var(--gold);
+    border-radius: 50%;
+    top: -6px;
+    right: -6px;
+}
 
-}
-@media (max-width:1050px){
-    .navbar .logo{
-        width: 140px;
+@media (max-width: 1050px) {
+    .navbar {
+        padding: 20px 32px;
     }
-    .navbar-menu{
-        gap: 20px;
-        font-size: 17px;
-    }
-    .navbar-right{
-        gap: 30px;
-    }
-    .navbar-right img{
-        width: 22px;
-    }
-    .navbar-right button{
-        padding: 8px 25px;
-    }
-}
-@media (max-width:900px){
-    .navbar .logo{
+    .navbar .logo {
         width: 120px;
     }
-    .navbar-menu{
-        gap: 15px;
-        font-size: 16px;
+    .navbar-menu {
+        gap: 28px;
+        font-size: 11px;
     }
-    .navbar-right{
-        gap: 20px;
+    .navbar-right {
+        gap: 24px;
     }
-    .navbar-right img{
+    .navbar-right img {
         width: 20px;
     }
-    .navbar-right button{
-        padding: 7px 20px;
-        font-size: 15px;
+    .navbar-right button {
+        padding: 10px 26px;
     }
 }
-.navbar-profile{
+
+@media (max-width: 900px) {
+    .navbar {
+        padding: 18px 24px;
+    }
+    .navbar .logo {
+        width: 100px;
+    }
+    .navbar-menu {
+        gap: 18px;
+        font-size: 10px;
+    }
+    .navbar-right {
+        gap: 18px;
+    }
+    .navbar-right img {
+        width: 18px;
+    }
+    .navbar-right button {
+        padding: 8px 20px;
+        font-size: 10px;
+    }
+}
+
+.navbar-profile {
     position: relative;
 }
-.nav-profile-dropdown{
+
+.nav-profile-dropdown {
     position: absolute;
     display: none;
     right: 0;
-    z-index: 1;
+    top: 36px;
+    z-index: 10;
 }
-.navbar-profile:hover .nav-profile-dropdown{
+
+.navbar-profile:hover .nav-profile-dropdown {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    background-color: #fff2ef;
-    padding: 12px 25px;
-    border-radius: 4px;
-    border: 1px solid tomato;
-    outline: 2px solid white;
+    gap: 12px;
+    background-color: #1a1613;
+    padding: 16px 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(245, 239, 230, 0.15);
     list-style: none;
 }
-.nav-profile-dropdown li{
+
+.nav-profile-dropdown li {
     display: flex;
     align-items: center;
-    gap:10px;
+    gap: 10px;
     cursor: pointer;
-}
-.nav-profile-dropdown img{
-    width: 20px;
-}
-.nav-profile-dropdown li:hover{
-    color: tomato;
+    color: var(--muted);
+    font-size: 13px;
+    transition: color 0.25s ease;
 }
 
-@media (max-width:750px){
+.nav-profile-dropdown li:hover {
+    color: var(--gold);
+}
 
-    .navbar-menu{
+.nav-profile-dropdown img {
+    width: 16px;
+    filter: brightness(0) invert(1);
+    opacity: 0.7;
+}
+
+.nav-profile-dropdown hr {
+    border: none;
+    border-top: 1px solid rgba(245, 239, 230, 0.15);
+    margin: 0;
+}
+
+@media (max-width: 750px) {
+    .navbar-menu {
         display: none;
     }
-   
 }
