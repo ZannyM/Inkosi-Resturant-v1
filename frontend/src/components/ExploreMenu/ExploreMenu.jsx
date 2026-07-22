@@ -1,8 +1,16 @@
 import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import './ExploreMenu.css'
 import { menu_list } from '../../assets/assets'
 
-const ExploreMenu = ({ category, setCategory }) => {
+const ExploreMenu = () => {
+  const navigate = useNavigate();
+
+  // Redirects to /menu with the specific category selected
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/menu?category=${encodeURIComponent(categoryName)}`);
+  };
+
   return (
     <section className="explore-menu-section" id="explore-menu">
       <div className="explore-menu-container">
@@ -15,49 +23,43 @@ const ExploreMenu = ({ category, setCategory }) => {
               Six kitchens,<br />one address.
             </h2>
           </div>
-          <a href="#food-display" className="explore-menu-browse-link">
+
+          {/* Browse All Link -> Lands on /menu with "All" category */}
+          <Link to="/menu?category=All" className="explore-menu-browse-link">
             BROWSE ALL &rarr;
-          </a>
+          </Link>
         </div>
 
-        {/* 6-Card Category Grid */}
+        {/* Category Cards Grid */}
         <div className="explore-menu-grid">
-          {menu_list.map((item, index) => {
-            const isActive = category === item.menu_name;
-            return (
-              <div
-                key={index}
-                onClick={() =>
-                  setCategory((prev) =>
-                    prev === item.menu_name ? 'all' : item.menu_name
-                  )
-                }
-                className={`explore-menu-card ${isActive ? 'active' : ''}`}
-              >
-                <div className="explore-menu-img-wrapper">
-                  <img
-                    src={item.menu_image}
-                    alt={item.menu_name}
-                    loading="lazy"
-                  />
-                  {/* Subtle Dark Gradient at Bottom */}
-                  <div className="explore-menu-gradient-overlay" />
-                  
-                  {/* Content Overlay */}
-                  <div className="explore-menu-card-content">
-                    <h3 className="explore-menu-card-name">
-                      {item.menu_name}
-                    </h3>
-                    {item.subtitle && (
-                      <p className="explore-menu-card-subtitle">
-                        {item.subtitle}
-                      </p>
-                    )}
-                  </div>
+          {menu_list.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => handleCategoryClick(item.menu_name)}
+              className="explore-menu-card"
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="explore-menu-img-wrapper">
+                <img
+                  src={item.menu_image}
+                  alt={item.menu_name}
+                  loading="lazy"
+                />
+                <div className="explore-menu-gradient-overlay" />
+                
+                <div className="explore-menu-card-content">
+                  <h3 className="explore-menu-card-name">
+                    {item.menu_name}
+                  </h3>
+                  {item.subtitle && (
+                    <p className="explore-menu-card-subtitle">
+                      {item.subtitle}
+                    </p>
+                  )}
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
       </div>
