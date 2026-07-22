@@ -85,27 +85,33 @@ export const assets = {
 
 export const menu_list = [
     {
-        menu_name: "Salad",
+        menu_name: "Salads",
+        subtitle: "GARDEN, SEA, CELLAR",
         menu_image: menu_1
     },
     {
         menu_name: "Deserts",
+        subtitle: "HAND-FORMED, CURED",
         menu_image: menu_3
     },
     {
         menu_name: "Sandwich",
+        subtitle: "BETWEEN TWO CRUSTS",
         menu_image: menu_4
     },
     {
         menu_name: "Cake",
+        subtitle: "SLOW-SIMMERED BROTHS",
         menu_image: menu_5
     },
     {
         menu_name: "Pasta",
+        subtitle: "BETWEEN TWO CRUSTS",
         menu_image: menu_7
     },
     {
         menu_name: "Noodles",
+        subtitle: "THE LAST COURSE",
         menu_image: menu_8
     }]
 
