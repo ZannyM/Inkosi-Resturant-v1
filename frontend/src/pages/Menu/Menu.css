@@ -1,0 +1,185 @@
+
+.menu-page {
+  background-color: #f7f4ee;
+  min-height: 100vh;
+  padding-top: 80px; 
+}
+
+
+.menu-header {
+  padding: 64px 24px 40px;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+@media (min-width: 768px) {
+  .menu-header {
+    padding: 88px 40px 56px;
+  }
+}
+
+.menu-header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #78716c;
+  margin: 0 0 16px 0;
+  font-weight: 500;
+}
+
+.menu-title {
+  margin: 0;
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  font-weight: 400;
+  font-size: 42px;
+  line-height: 1.05;
+  color: #1c1917;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 768px) {
+  .menu-title {
+    font-size: 64px;
+  }
+}
+
+.menu-title .text-gold {
+  color: #c5a059;
+  font-style: italic;
+}
+
+.menu-subtitle {
+  margin-top: 24px;
+  margin-bottom: 0;
+  max-width: 540px;
+  color: #78716c;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Sticky Tab*/
+.sticky-tabs-wrapper {
+  position: sticky;
+  top: 80px; 
+  z-index: 30;
+  background-color: rgba(247, 244, 238, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+.sticky-tabs-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 768px) {
+  .sticky-tabs-container {
+    padding: 0 40px;
+  }
+}
+
+.sticky-tabs-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 16px 0;
+  scrollbar-width: none; 
+}
+
+.sticky-tabs-scroll::-webkit-scrollbar {
+  display: none; 
+}
+
+.tab-button {
+  flex-shrink: 0;
+  border-radius: 9999px;
+  padding: 10px 20px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #78716c;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  color: #1c1917;
+}
+
+.tab-button.active {
+  background-color: #1c1917;
+  color: #ffffff;
+}
+
+.menu-grid-section {
+  padding: 64px 24px 96px;
+}
+
+@media (min-width: 768px) {
+  .menu-grid-section {
+    padding: 80px 40px 120px;
+  }
+}
+
+.menu-grid-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.menu-dishes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px 32px;
+}
+
+@media (min-width: 640px) {
+  .menu-dishes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .menu-dishes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.menu-empty-state {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 96px 0;
+  text-align: center;
+}
+
+.empty-title {
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  font-size: 28px;
+  color: #1c1917;
+  margin: 0 0 12px 0;
+}
+
+.empty-subtitle {
+  color: #78716c;
+  margin: 0 0 32px 0;
+}
+
+.empty-action-btn {
+  background: none;
+  border: none;
+  color: #c5a059;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}

@@ -220,7 +220,7 @@
 
 .mobile-nav-link {
   font-family: var(--font-serif);
-  font-size: 2.5rem; /* text-4xl */
+  font-size: 2.5rem; 
   color: inherit;
   text-decoration: none;
   transition: opacity 200ms ease;
