@@ -68,11 +68,6 @@
   color: var(--cream-70);
 }
 
-/* .cart-title {
-  font-family: var(--font-serif);
-  font-size: 1.5rem; 
-  margin-top: 4px;
-} */
  .cart-title {
   font-family: serif;
   font-size: 1.5rem; 
@@ -176,7 +171,7 @@
 
 .item-name {
   font-family: var(--font-serif);
-  font-size: 1.125rem; /* text-lg */
+  font-size: 1.125rem; 
   line-height: 1.25;
 }
 

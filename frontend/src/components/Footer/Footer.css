@@ -1,4 +1,3 @@
-/* Color & Typography Tokens */
 :root {
   --espresso: #141210;
   --cream: #fbf9f5;
@@ -11,9 +10,8 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Base Footer Section */
 .footer-container {
-  margin-top: 128px; 
+  margin-top: 0; 
   border-top: 1px solid var(--border-color);
   background-color: rgba(20, 18, 16, 0.95); 
   color: var(--cream);
@@ -52,7 +50,6 @@
   }
 }
 
-/* Brand Section */
 .footer-logo {
   font-family: var(--font-serif);
   font-size: 1.875rem; 
@@ -116,7 +113,6 @@
   height: 16px;
 }
 
-/* Newsletter Section */
 .newsletter-description {
   font-size: 0.875rem;
   color: var(--muted-text);

@@ -1,0 +1,17 @@
+.home-page {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.home-page > section {
+  padding-top: 80px !important;
+  padding-bottom: 80px !important;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .home-page > section {
+    padding-top: 128px !important; 
+    padding-bottom: 128px !important;
+  }
+}

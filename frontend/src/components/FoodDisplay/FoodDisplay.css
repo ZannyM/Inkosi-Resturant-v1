@@ -1,15 +1,64 @@
-.food-display{
-    margin-top: 30px;
+.food-display {
+  background: var(--secondary, #f5f1ea);
+  padding: 96px 24px;
 }
-.food-display h2{
-    font-size: max(2vw, 24px);
-    font-weight: 600;
 
+/* Header container aligned to match the grid width */
+.food-display-header {
+  max-width: 1200px;
+  margin: 0 auto 56px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
-.food-display-list{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    margin-top: 30px;
-    gap: 30px;
-    row-gap: 50px;
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold, #c9a24b);
+  margin: 0;
+}
+
+.food-display-title {
+  margin-top: 16px;
+  margin-bottom: 0;
+  font-family: var(--font-serif, "Georgia", serif);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.2;
+  color: var(--espresso, #2b1f18);
+}
+
+.food-display-subtext {
+  margin-top: 16px;
+  margin-bottom: 0;
+  color: var(--muted-foreground, #8a8078);
+  line-height: 1.6;
+  max-width: 540px; /* Constrains text width for clean editorial typography */
+}
+
+/* Grid layout */
+.food-display-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 56px 32px;
+}
+
+@media (min-width: 768px) {
+  .food-display-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .food-display-title {
+    font-size: 44px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .food-display-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }

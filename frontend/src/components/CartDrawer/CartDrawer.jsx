@@ -1,41 +1,6 @@
+
 import React, { useEffect } from 'react';
 import './CartDrawer.css';
-
-export function QtyStepper({ qty, onChange }) {
-  return (
-    <div className="qty-stepper">
-      <button
-        onClick={() => onChange(qty - 1)}
-        aria-label="Decrease"
-        className="qty-btn"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
-      <span className="qty-value">{qty}</span>
-      <button
-        onClick={() => onChange(qty + 1)}
-        aria-label="Increase"
-        className="qty-btn"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
-    </div>
-  );
-}
-
-function Row({ label, value }) {
-  return (
-    <div className="cart-summary-row">
-      <span className="summary-label">{label}</span>
-      <span className="summary-value">{value}</span>
-    </div>
-  );
-}
 
 export function CartDrawer({
   items = [],

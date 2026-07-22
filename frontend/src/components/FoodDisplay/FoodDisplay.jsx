@@ -3,27 +3,65 @@ import './FoodDisplay.css'
 import { StoreContext } from '../../context/StoreContext'
 import FoodItem from '../FoodItem/FoodItem'
 
-//find out what this does and why we use it
+const FoodDisplay = () => {
+    const { food_list } = useContext(StoreContext)
 
-const FoodDisplay = ({category}) => {
+    const featured = food_list.slice(0, 4)
 
-    const {food_list} = useContext(StoreContext);
+    return (
+        <section className="food-display" id="food-display">
+            <div className="food-display-header">
+                <p className="eyebrow">This week</p>
+                <h2 className="food-display-title">Featured dishes.</h2>
+                <p className="food-display-subtext">
+                    A short list, chosen by the chef. Available while the produce lasts.
+                </p>
+            </div>
 
-
-  return (
-    <div className='food-display' id='food-display'>
-      <h2>Top dishes near you</h2>
-      <div className="food-display-list">
-        {food_list.map((item,index) => {
-          if (category === 'all' || item.category === category) {
-            return <FoodItem key={index} id={item._id} name={item.name} price={item.price} description={item.description} image={item.image}/>
-
-          }
-        })}
-      </div>
-
-    </div>
-  )
+            <div className="food-display-grid">
+                {featured.map((item, index) => (
+                    <FoodItem
+                        key={index}
+                        id={item._id}
+                        name={item.name}
+                        price={item.price}
+                        description={item.description}
+                        image={item.image}
+                    />
+                ))}
+            </div>
+        </section>
+    )
 }
 
 export default FoodDisplay
+
+// import React, { useContext } from 'react'
+// import './FoodDisplay.css'
+// import { StoreContext } from '../../context/StoreContext'
+// import FoodItem from '../FoodItem/FoodItem'
+
+// //find out what this does and why we use it
+
+// const FoodDisplay = ({category}) => {
+
+//     const {food_list} = useContext(StoreContext);
+
+
+//   return (
+//     <div className='food-display' id='food-display'>
+//       <h2>Top dishes near you</h2>
+//       <div className="food-display-list">
+//         {food_list.map((item,index) => {
+//           if (category === 'all' || item.category === category) {
+//             return <FoodItem key={index} id={item._id} name={item.name} price={item.price} description={item.description} image={item.image}/>
+
+//           }
+//         })}
+//       </div>
+
+//     </div>
+//   )
+// }
+
+// export default FoodDisplay

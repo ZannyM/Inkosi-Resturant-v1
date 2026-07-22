@@ -11,22 +11,22 @@
 body {
   min-height: 100vh;
 }
-
+.eyebrow {
+  color: #1c1917 !important; 
+}
 a {
   text-decoration: none;
   color: inherit;
 }
 
-/* Full-height flexbox column to pin footer to bottom */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* Main inner layout (80% centered, flex: 1 pushes footer down) */
 .app {
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
   flex: 1; 
 }
