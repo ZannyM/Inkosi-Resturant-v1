@@ -12,7 +12,7 @@
   padding: 0 24px;
 }
 
-/* Header Styling */
+
 .explore-menu-header {
   display: flex;
   flex-direction: column;
@@ -68,7 +68,7 @@
   color: #1c1917;
 }
 
-/* Card Grid Layout */
+
 .explore-menu-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -89,7 +89,7 @@
   }
 }
 
-/* Individual Card Styling */
+
 .explore-menu-card {
   cursor: pointer;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -102,8 +102,8 @@
 .explore-menu-img-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4; /* Portrait proportion */
-  border-radius: 28px; /* Smooth pill shape matching reference image */
+  aspect-ratio: 3 / 4; 
+  border-radius: 28px; 
   overflow: hidden;
   background-color: #2b2623;
 }
@@ -120,7 +120,7 @@
   transform: scale(1.06);
 }
 
-/* Gradient Overlay for Text Readability */
+
 .explore-menu-gradient-overlay {
   position: absolute;
   inset: 0;
@@ -132,7 +132,7 @@
   );
 }
 
-/* Content Container Inside Card */
+
 .explore-menu-card-content {
   position: absolute;
   bottom: 0;
@@ -161,7 +161,7 @@
   font-weight: 500;
 }
 
-/* Active Highlight Outline */
+
 .explore-menu-card.active .explore-menu-img-wrapper {
   outline: 2px solid #c5a059;
   outline-offset: -2px;
