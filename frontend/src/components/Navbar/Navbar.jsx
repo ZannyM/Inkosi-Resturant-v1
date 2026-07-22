@@ -5,7 +5,7 @@ import './Navbar.css';
 const NAV_ITEMS = [
   { path: '/', label: 'Home' },
   { path: '/menu', label: 'Menu' },
-  { path: '/orders', label: 'Orders' },
+  { path: '/orders', label: 'Order' },
 ];
 
 const Navbar = ({ count = 0, setDrawerOpen }) => {

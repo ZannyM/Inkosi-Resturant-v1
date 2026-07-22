@@ -1,4 +1,274 @@
-.place-order{
+/* Page Setup */
+.orders-page {
+  background-color: #f7f4ee;
+  min-height: 100vh;
+  padding-top: 80px; /* Offset for fixed navbar */
+  box-sizing: border-box;
+}
+
+.orders-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
+}
+
+@media (min-width: 768px) {
+  .orders-container {
+    padding: 88px 40px 120px;
+  }
+}
+
+.orders-title {
+  margin: 16px 0 0 0;
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  font-weight: 400;
+  font-size: 42px;
+  color: #1c1917;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 768px) {
+  .orders-title {
+    font-size: 56px;
+  }
+}
+
+/* Skeleton Loading Animation */
+.skeleton-wrapper {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-card {
+  height: 128px;
+  border-radius: 24px;
+  background: linear-gradient(90deg, #eae5da 25%, #f2ede2 50%, #eae5da 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty State */
+.orders-empty-state {
+  margin-top: 64px;
+  text-align: center;
+  padding: 80px 24px;
+  border: 1px dashed rgba(28, 25, 23, 0.15);
+  border-radius: 28px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.empty-title {
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  font-size: 28px;
+  color: #1c1917;
+  margin: 0;
+}
+
+.empty-subtitle {
+  margin-top: 12px;
+  color: #78716c;
+}
+
+.start-order-btn {
+  display: inline-block;
+  margin-top: 32px;
+  border-radius: 9999px;
+  background-color: #1c1917;
+  color: #ffffff;
+  padding: 16px 32px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.start-order-btn:hover {
+  background-color: #c5a059;
+  color: #1c1917;
+}
+
+/* Orders List */
+.orders-list {
+  margin-top: 48px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.order-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .order-card {
+    padding: 32px;
+  }
+}
+
+.order-card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.order-date {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #78716c;
+  margin: 0;
+}
+
+.order-id {
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  font-size: 22px;
+  color: #1c1917;
+  margin: 8px 0 0 0;
+}
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.order-total {
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  font-size: 20px;
+  margin: 0;
+  color: #1c1917;
+}
+
+/* Status Badge Styling */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  background-color: #f0ece1;
+  color: #1c1917;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.7;
+}
+
+.status-badge.status-paid {
+  background-color: rgba(197, 160, 89, 0.18);
+  color: #1c1917;
+  border: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+.status-badge.status-delivered {
+  background-color: #1c1917;
+  color: #ffffff;
+}
+
+/* Item Chips Carousel */
+.order-items-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  margin-top: 20px;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.order-items-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.item-chip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f7f4ee;
+  border-radius: 9999px;
+  padding: 4px 16px 4px 4px;
+}
+
+.chip-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chip-text {
+  font-size: 13px;
+  color: #1c1917;
+}
+
+.chip-qty {
+  color: #78716c;
+}
+
+/* Footer & Actions */
+.order-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.track-order-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 9999px;
+  background-color: #1c1917;
+  color: #ffffff;
+  padding: 10px 20px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.track-order-btn:hover {
+  background-color: #c5a059;
+  color: #1c1917;
+}
+
+.pin-icon {
+  width: 14px;
+  height: 14px;
+}
+
+
+/* .place-order{
     display: flex;
     align-items: start;
     justify-content: space-between;
@@ -32,4 +302,4 @@
 }
 .place-order .cart-total button{
     margin-top: 30px;
-}
+} */
