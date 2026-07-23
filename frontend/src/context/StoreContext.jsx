@@ -5,13 +5,20 @@ export const StoreContext = createContext(null);
 //find out what this does and why we use it
 const StoreContextProvider = (props) => {
 
-    const [cartItems, setCartItems] = useState({});
-    const [drawerOpen, setDrawerOpen] = useState(false)
+    const [cartItems, setCartItems] = useState(() => {
+        const savedCart = localStorage.getItem("cartItems");
+        return savedCart ? JSON.parse(savedCart) : {};
+    });
 
+    const [drawerOpen, setDrawerOpen] = useState(false)
 
     const url = "http://localhost:4000"
     const [token, setToken] = useState("");
     const [food_list, setFoodList] = useState([]);
+
+    useEffect(() => {
+        localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    }, [cartItems]);
 
     const addToCart = async (itemId) => {
         if (!cartItems[itemId]) {
@@ -81,9 +88,7 @@ const StoreContextProvider = (props) => {
         }
         loadData();
     }, []);
-    // useEffect(() => {
-    //     console.log(cartItems);
-    // }, [cartItems]);
+  
 
     const getTotalCartCount = () =>{
         let totalCount = 0;
