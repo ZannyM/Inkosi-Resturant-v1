@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useContext } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import './Menu.css'
-import { food_list } from '../../assets/assets'
 import FoodItem from '../../components/FoodItem/FoodItem'
+import { StoreContext } from '../../context/StoreContext' // 1. Import StoreContext
 
 const TABS = ["All", "Salads", "Rolls", "Pasta", "Noodles", "Sandwiches", "Desserts"];
 
-// Normalizer function to map common typos or singular/plural naming mismatches
 const normalizeCategory = (cat) => {
   if (!cat) return "All";
   const raw = cat.toLowerCase().trim();
@@ -21,18 +20,17 @@ const normalizeCategory = (cat) => {
 };
 
 const Menu = () => {
+  const { food_list } = useContext(StoreContext);
+
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Read URL query param and normalize it immediately
   const rawUrlParam = searchParams.get('category') || "All";
   const [category, setCategory] = useState(normalizeCategory(rawUrlParam));
 
-  // 1. Force page scroll to top whenever user lands on Menu page
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // 2. Keep state synced when search params change
   useEffect(() => {
     const currentParam = searchParams.get('category');
     if (currentParam) {
@@ -40,13 +38,11 @@ const Menu = () => {
     }
   }, [searchParams]);
 
-  // Tab change handler
   const handleTabChange = (selectedTab) => {
     setCategory(selectedTab);
     setSearchParams({ category: selectedTab });
   };
 
-  // 3. Robust filtering algorithm
   const filteredDishes = useMemo(() => {
     if (!food_list) return [];
     if (category.toLowerCase() === "all") return food_list;
@@ -55,7 +51,7 @@ const Menu = () => {
       const itemCat = normalizeCategory(item.category);
       return itemCat.toLowerCase() === category.toLowerCase();
     });
-  }, [category]);
+  }, [category, food_list]); 
 
   return (
     <div className="menu-page">
@@ -78,7 +74,6 @@ const Menu = () => {
         <div className="sticky-tabs-container">
           <div className="sticky-tabs-scroll">
             {TABS.map((tab) => {
-              // Compare normalized names so highlight works 100% of the time
               const active = category.toLowerCase() === tab.toLowerCase();
               return (
                 <button

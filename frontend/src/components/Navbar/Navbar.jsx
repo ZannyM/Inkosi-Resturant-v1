@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import { StoreContext } from '../../context/StoreContext';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Home' },
@@ -8,10 +9,13 @@ const NAV_ITEMS = [
   { path: '/orders', label: 'Order' },
 ];
 
-const Navbar = ({ count = 0, setDrawerOpen }) => {
+const Navbar = ({ setDrawerOpen }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+
+  const { getTotalCartCount } = useContext(StoreContext);
+  const cartCount = getTotalCartCount ? getTotalCartCount() : 0;
 
   const currentPath = location.pathname;
   const isHome = currentPath === '/';
@@ -67,8 +71,8 @@ const Navbar = ({ count = 0, setDrawerOpen }) => {
                 <path d="M3.103 6.034h17.794"></path>
                 <path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"></path>
               </svg>
-              {count > 0 && (
-                <span className="cart-badge">{count}</span>
+              {cartCount > 0 && (
+                <span className="cart-badge">{cartCount}</span>
               )}
             </button>
 
