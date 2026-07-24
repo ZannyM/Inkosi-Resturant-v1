@@ -5,9 +5,24 @@ import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
 
-  const { cartItems, food_list, removeFromCart, getTotalCartAmount, url } = useContext(StoreContext);
+  const { cartItems, food_list, removeFromCart, getTotalCartAmount, url, token } = useContext(StoreContext);
 
   const navigate = useNavigate();
+
+  const handleProceedToCheckout = () => {
+    if (!token) {
+      navigate('/', {
+        state: {
+          openLogin: true,
+          promptMessage: 'Please sign in to continue to checkout.',
+          redirectAfterLogin: '/checkout'
+        }
+      });
+      return;
+    }
+
+    navigate('/checkout');
+  };
 
   return (
     <div className='cart'>
@@ -62,7 +77,7 @@ const Cart = () => {
               <b>R {getTotalCartAmount() == 0 ? 0 : getTotalCartAmount() + 2}</b>
             </div>
           </div>
-          <button onClick={() => navigate('/order')} >PROCEED TO CHECKOUT</button>
+          <button onClick={handleProceedToCheckout}>PROCEED TO CHECKOUT</button>
         </div>
         <div className="cart-promocode">
           <div>

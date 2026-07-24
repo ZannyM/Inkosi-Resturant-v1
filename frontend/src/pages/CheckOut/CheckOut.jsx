@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Lock, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
@@ -8,6 +8,7 @@ import './CheckOut.css';
 const CheckOut = () => {
   const { getTotalCartAmount, token, food_list, cartItems, url, isInitialized } = useContext(StoreContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [submitting, setSubmitting] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
@@ -50,11 +51,18 @@ const CheckOut = () => {
     if (!isInitialized) return;
 
     if (!token) {
-      // If user isn't logged in, redirect to homepage/login
-      navigate('/');
+      // Redirect with login intent so App can open the auth modal.
+      navigate('/', {
+        replace: true,
+        state: {
+          openLogin: true,
+          promptMessage: 'Please sign in to continue to checkout.',
+          redirectAfterLogin: '/checkout'
+        }
+      });
     } else if (subtotal === 0) {
       // If cart is empty, redirect back to menu
-      navigate('/menu');
+      navigate('/menu', { replace: true });
     }
   }, [isInitialized, token, subtotal, navigate]);
 
@@ -111,6 +119,12 @@ const CheckOut = () => {
     <div className="checkout-container">
       <p className="eyebrow">Almost there</p>
       <h1 className="checkout-title">Checkout.</h1>
+
+      {location.state?.paymentFailed && (
+        <div className="checkout-payment-alert" role="alert">
+          {location.state.message || 'Payment was not completed. Please try again.'}
+        </div>
+      )}
 
       {/* Mobile Collapsible Summary Toggle */}
       <div className="mobile-summary-toggle">

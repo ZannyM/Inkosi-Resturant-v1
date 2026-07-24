@@ -1,0 +1,198 @@
+/* Container & Background */
+.confirmation-page {
+  background-color: #f7f4ee;
+  min-height: 100vh;
+  padding-top: 80px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirmation-card {
+  max-width: 672px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 80px 24px 96px;
+  text-align: center;
+}
+
+/* Success Checkmark Icon Badge */
+.success-badge {
+  margin: 0 auto 12px;
+  display: flex;
+  height: 80px;
+  width: 80px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: rgba(197, 160, 89, 0.15);
+  color: #c5a059;
+}
+
+.check-icon {
+  width: 32px;
+  height: 32px;
+}
+
+/* Typography */
+.confirmation-eyebrow {
+  margin-top: 24px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #78716c;
+  font-weight: 600;
+}
+
+.confirmation-title {
+  margin-top: 12px;
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  font-size: 48px;
+  font-weight: 400;
+  color: #1c1917;
+  line-height: 1.1;
+}
+
+@media (min-width: 768px) {
+  .confirmation-title {
+    font-size: 60px;
+  }
+}
+
+.confirmation-copy {
+  margin-top: 20px;
+  color: #78716c;
+  line-height: 1.6;
+  font-size: 15px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.order-id-highlight {
+  color: #1c1917;
+  font-weight: 600;
+}
+
+/* Order Summary Card */
+.order-summary-card {
+  margin-top: 48px;
+  border-radius: 28px;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  background-color: #ffffff;
+  padding: 32px;
+  text-align: left;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.08);
+  padding-bottom: 16px;
+}
+
+.summary-header .confirmation-eyebrow {
+  margin-top: 0;
+}
+
+.summary-id, 
+.summary-total {
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  font-size: 22px;
+  margin-top: 4px;
+  color: #1c1917;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.summary-items-list {
+  margin-top: 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.04);
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.item-thumbnail {
+  height: 48px;
+  width: 48px;
+  border-radius: 12px;
+  object-fit: cover;
+  background-color: #f7f4ee;
+}
+
+.item-name {
+  font-family: var(--font-serif, "Playfair Display", "Georgia", serif);
+  color: #1c1917;
+  font-size: 16px;
+  margin: 0;
+}
+
+.item-qty {
+  font-size: 12px;
+  color: #78716c;
+  margin-top: 2px;
+}
+
+/* Actions & Navigation Buttons */
+.confirmation-actions {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .confirmation-actions {
+    flex-direction: row;
+  }
+}
+
+.confirmation-btn {
+  border-radius: 9999px;
+  padding: 16px 32px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.confirmation-btn.primary {
+  background-color: #1c1917;
+  color: #ffffff;
+}
+
+.confirmation-btn.primary:hover {
+  background-color: #c5a059;
+  color: #1c1917;
+}
+
+.confirmation-btn.secondary {
+  border: 1px solid rgba(28, 25, 23, 0.15);
+  color: #1c1917;
+}
+
+.confirmation-btn.secondary:hover {
+  background-color: rgba(28, 25, 23, 0.05);
+}                                          
+
+

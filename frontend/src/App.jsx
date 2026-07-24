@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
-// import LoginPopup from './components/LoginPopup/LoginPopup';
 import CartDrawer from './components/CartDrawer/CartDrawer';
+import LoginPopup from './components/Auth/LoginPopup';
 
 import Home from './pages/Home/Home';
 import Cart from './pages/Cart/Cart';
@@ -12,23 +12,58 @@ import Verify from './pages/Verify/Verify';
 import MyOrders from './pages/MyOrders/MyOrders';
 import Menu from './pages/Menu/Menu';
 import CheckOut from './pages/CheckOut/CheckOut';
-
-import { StoreContext } from './context/StoreContext';
+import Confirmation from './pages/Confirmation/Confirmation';
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
+  const [loginPromptMessage, setLoginPromptMessage] = useState('');
+  const [redirectAfterLogin, setRedirectAfterLogin] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // Cart context state fallback
-  const { cartItems = {}, food_list = [] } = useContext(StoreContext) || {};
+  const openLoginPrompt = (promptMessage = '', redirectPath = '') => {
+    setLoginPromptMessage(promptMessage);
+    setRedirectAfterLogin(redirectPath);
+    setShowLogin(true);
+  };
+
+  const handleSetShowLogin = (shouldShow) => {
+    if (shouldShow) {
+      openLoginPrompt();
+      return;
+    }
+
+    setShowLogin(false);
+    setLoginPromptMessage('');
+    setRedirectAfterLogin('');
+  };
+
+  useEffect(() => {
+    if (!location.state?.openLogin) return;
+
+    openLoginPrompt(
+      location.state.promptMessage || '',
+      location.state.redirectAfterLogin || ''
+    );
+
+    // Clear route state after consuming the login intent.
+    navigate(location.pathname, { replace: true, state: {} });
+  }, [location.pathname, location.state, navigate]);
 
   return (
     <>
-      {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
-
+      {showLogin && (
+        <LoginPopup
+          setShowLogin={handleSetShowLogin}
+          promptMessage={loginPromptMessage}
+          redirectAfterLogin={redirectAfterLogin}
+        />
+      )}
+     
       <div className="app-container">
         <Navbar
-          setShowLogin={setShowLogin}
+          setShowLogin={handleSetShowLogin}
           setDrawerOpen={setDrawerOpen}
         />
 
@@ -39,6 +74,7 @@ const App = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<CheckOut />} />
             <Route path="/verify" element={<Verify />} />
+            <Route path="/confirmation" element={<Confirmation />} />
             <Route path="/myorders" element={<MyOrders />} />
           </Routes>
         </div>
@@ -49,6 +85,7 @@ const App = () => {
       <CartDrawer
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        openLoginPrompt={openLoginPrompt}
       />
     </>
   );
