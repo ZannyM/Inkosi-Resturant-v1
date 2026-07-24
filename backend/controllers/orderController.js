@@ -1,5 +1,6 @@
 import orderModel from "../models/orderModel.js";
 import userModel from '../models/userModel.js'
+import storeSettingsModel from "../models/storeSettingsModel.js";
 
 //Placing user order from frontend
 const placeOrder = async (req, res) => {
@@ -7,6 +8,19 @@ const placeOrder = async (req, res) => {
     const frontend_url = "http://localhost:5174"
 
     try {
+        const storeSettings = await storeSettingsModel.findOneAndUpdate(
+            { key: "primary" },
+            { $setOnInsert: { isStoreLive: true } },
+            { upsert: true, new: true }
+        );
+
+        if (!storeSettings.isStoreLive) {
+            return res.status(503).json({
+                success: false,
+                message: "Store is currently paused and not accepting new orders."
+            });
+        }
+
         const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
         if (!paystackSecretKey) {
             return res.status(500).json({ success: false, message: "Paystack secret key is not configured." });
@@ -26,6 +40,8 @@ const placeOrder = async (req, res) => {
 
         const amountInKobo = Math.round(Number(req.body.amount || 0) * 100);
         const reference = `order_${newOrder._id}_${Date.now()}`;
+
+        await orderModel.findByIdAndUpdate(newOrder._id, { paystackReference: reference });
 
         const paystackResponse = await fetch("https://api.paystack.co/transaction/initialize", {
             method: "POST",
@@ -88,7 +104,18 @@ const userOrders = async (req,res) =>{
 // create api to fetch AND LIST ORDERS FOR ADMIN PANEL
 const listOrders = async (req,res) =>{
     try {
-        const orders = await orderModel.find({});
+        const statusFilter = req.query.status;
+        const query = {};
+
+        if (statusFilter && statusFilter !== "all") {
+            if (statusFilter === "Food Processing") {
+                query.status = { $in: ["Food Processing", "Food Proocessing"] };
+            } else {
+                query.status = statusFilter;
+            }
+        }
+
+        const orders = await orderModel.find(query);
         res.json({success:true,data:orders})
     } catch (error) {
         console.log(error);

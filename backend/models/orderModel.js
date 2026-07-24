@@ -5,6 +5,7 @@ const orderSchema = new mongoose.Schema({
     items: {type:Array, required:true},
     amount:{type:Number,required:true},
     address:{type:Object,required:true},
+    paystackReference: { type: String, default: "" },
     status:{type:String,default:"Food Proocessing"},
     date:{type:Date,default:Date.now()},
     payment:{type:Boolean,default:false}

@@ -1,3 +1,103 @@
+.list-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.list-action-btn {
+  border: 1px solid rgba(20, 18, 16, 0.14);
+  border-radius: 999px;
+  padding: 0.32rem 0.62rem;
+  background: #fff;
+  color: #3f3832;
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.list-action-btn-danger {
+  border-color: rgba(199, 58, 20, 0.38);
+  color: #ad3919;
+  background: #fff6f3;
+}
+.list-item-editor {
+  border-bottom: 1px solid rgba(20, 18, 16, 0.08);
+  background: #fcfaf6;
+  padding: 0.95rem;
+}
+.list-item-editor h4 {
+  font-family: var(--font-serif);
+  color: var(--espresso);
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: 0.7rem;
+}
+.list-item-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+.list-item-editor-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.list-item-editor-grid label span {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #675d54;
+}
+.list-item-editor-grid input,
+.list-item-editor-grid select,
+.list-item-editor-grid textarea {
+  border: 1px solid rgba(20, 18, 16, 0.15);
+  border-radius: 0.6rem;
+  padding: 0.56rem 0.66rem;
+  background: #fff;
+  color: #312a24;
+}
+.list-item-editor-description {
+  grid-column: 1 / -1;
+}
+.list-item-editor-featured {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.3rem;
+}
+.list-item-editor-featured input {
+  width: 16px;
+  height: 16px;
+}
+.list-item-editor-featured span {
+  margin: 0;
+}
+.list-item-editor-actions {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+.list-editor-btn {
+  border: 1px solid rgba(20, 18, 16, 0.16);
+  background: #fff;
+  color: #3c342f;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  cursor: pointer;
+}
+.list-editor-btn.primary {
+  background: var(--espresso);
+  border-color: var(--espresso);
+  color: var(--cream);
+}
+.list-editor-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
 .list {
   width: min(100%, 980px);
   margin: 1rem 1.25rem 1.25rem;
@@ -54,6 +154,16 @@
   .list-table-format {
     grid-template-columns: 1fr 3fr 1fr;
     gap: 15px;
+  }
+  .list-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .list-item-editor-grid {
+    grid-template-columns: 1fr;
+  }
+  .list-item-editor-featured {
+    margin-top: 0;
   }
 
   .list-table-format.title {

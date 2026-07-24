@@ -15,6 +15,62 @@
     margin-bottom: 1rem;
 }
 
+.order-filter-bar {
+    margin-bottom: 1rem;
+}
+
+.order-filter-bar p {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #73685f;
+    margin-bottom: 0.45rem;
+}
+
+.order-filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.order-filter-chip {
+    border: 1px solid rgba(20, 18, 16, 0.16);
+    border-radius: 999px;
+    background: #fff;
+    color: #4d433b;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 170ms ease;
+}
+
+.order-filter-chip:hover {
+    border-color: rgba(212, 175, 55, 0.55);
+    background: #f7f1e8;
+}
+
+.order-filter-chip.active {
+    background: var(--espresso);
+    color: var(--cream);
+    border-color: var(--espresso);
+}
+
+.order-empty {
+    border: 1px dashed rgba(20, 18, 16, 0.18);
+    border-radius: 0.8rem;
+    padding: 0.9rem 1rem;
+    color: #665c54;
+    margin-bottom: 0.9rem;
+}
+
+.order-search-indicator {
+    font-size: 0.78rem;
+    color: #675d54;
+    margin-bottom: 0.8rem;
+}
+
 .order-item {
     display: grid;
     grid-template-columns: 0.45fr 2fr 1fr 0.9fr 1fr;
@@ -41,6 +97,12 @@
 
 .order-item-name {
     margin-top: 0.5rem;
+    margin-bottom: 0.35rem;
+}
+
+.order-item-reference {
+    color: #776d63;
+    font-size: 0.76rem;
     margin-bottom: 0.35rem;
 }
 
@@ -73,6 +135,10 @@
 
     .order-item img {
         width: 40px;
+    }
+
+    .order-filter-chip {
+        font-size: 0.69rem;
     }
 }
 

@@ -6,6 +6,7 @@ import foodRouter from "./routes/foodRoute.js"
 import userRouter from "./routes/userRoute.js"
 import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"
+import storeRouter from "./routes/storeRoute.js"
 
 
 console.log("Paystack key loaded:", process.env.PAYSTACK_SECRET_KEY ? "YES" : "NO");
@@ -28,6 +29,7 @@ app.use("/images",express.static('uploads'))
 app.use("/api/user",userRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/order",orderRouter)
+app.use("/api/store",storeRouter)
 
 
 app.get("/",(req,res)=>{

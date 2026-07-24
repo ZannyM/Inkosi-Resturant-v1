@@ -108,5 +108,61 @@ const removeFood = async (req,res) =>{
 
 }
 
+const updateFood = async (req, res) => {
+    try {
+        const { id, name, description, price, category, isFeatured } = req.body;
 
-export {addfood, listFood, removeFood, listFeaturedFood, updateFeaturedFood}
+        if (!id) {
+            return res.json({ success: false, message: "Food item id is required" });
+        }
+
+        const food = await foodModel.findById(id);
+        if (!food) {
+            return res.json({ success: false, message: "Food item not found" });
+        }
+
+        if (typeof name === "string") {
+            food.name = name.trim();
+        }
+
+        if (typeof description === "string") {
+            food.description = description.trim();
+        }
+
+        if (typeof category === "string") {
+            food.category = category;
+        }
+
+        if (price !== undefined) {
+            const parsedPrice = Number(price);
+            if (Number.isNaN(parsedPrice)) {
+                return res.json({ success: false, message: "Price must be a valid number" });
+            }
+            food.price = parsedPrice;
+        }
+
+        if (typeof isFeatured === "boolean") {
+            if (isFeatured && !food.isFeatured) {
+                const featuredCount = await foodModel.countDocuments({ isFeatured: true });
+                if (featuredCount >= MAX_FEATURED_DISHES) {
+                    return res.json({
+                        success: false,
+                        message: `You can only feature up to ${MAX_FEATURED_DISHES} dishes at once.`
+                    });
+                }
+            }
+
+            food.isFeatured = isFeatured;
+            food.featuredUpdatedAt = isFeatured ? new Date() : null;
+        }
+
+        await food.save();
+        res.json({ success: true, message: "Food item updated successfully" });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: "Error while updating food item" });
+    }
+}
+
+
+export {addfood, listFood, removeFood, updateFood, listFeaturedFood, updateFeaturedFood}

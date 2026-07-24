@@ -16,8 +16,7 @@ const apiUrl = "http://localhost:4000"
   return (
     <div>
       <ToastContainer/>
-      <Navbar />
-      <hr />
+      <Navbar url={apiUrl} />
       <div className="app-content">
         <Sidebar />
         <Routes>

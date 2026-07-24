@@ -12,7 +12,7 @@ const Featured = ({ url }) => {
   const fetchFoods = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${url}/api/food/list`);
+      const response = await axios.get(`${url}/api/food/featured`);
       if (response?.data?.success) {
         setFoods(response.data.data || []);
       } else {
@@ -26,17 +26,11 @@ const Featured = ({ url }) => {
     }
   };
 
-  const featuredCount = useMemo(
-    () => foods.filter((dish) => dish.isFeatured).length,
-    [foods]
-  );
+  const featuredCount = foods.length;
 
   const sortedFoods = useMemo(() => {
     const dishes = [...foods];
-    dishes.sort((a, b) => {
-      if (a.isFeatured === b.isFeatured) return a.name.localeCompare(b.name);
-      return a.isFeatured ? -1 : 1;
-    });
+    dishes.sort((a, b) => a.name.localeCompare(b.name));
     return dishes;
   }, [foods]);
 
@@ -75,7 +69,7 @@ const Featured = ({ url }) => {
           <p className="featured-kicker">Home spotlight</p>
           <h2>Weekly featured dishes</h2>
           <p>
-            Pick up to {MAX_FEATURED_DISHES} dishes for the home page. All dishes remain in the main menu database.
+            Showing only the selected featured dishes for the home page.
           </p>
         </div>
         <div className="featured-counter">
@@ -87,6 +81,9 @@ const Featured = ({ url }) => {
         <p className="featured-loading">Loading dishes...</p>
       ) : (
         <div className="featured-grid">
+          {sortedFoods.length === 0 && (
+            <p className="featured-loading">No featured dishes selected yet.</p>
+          )}
           {sortedFoods.map((dish) => (
             <article key={dish._id} className={`featured-card ${dish.isFeatured ? 'active' : ''}`}>
               <img src={`${url}/images/${dish.image}`} alt={dish.name} />
@@ -103,7 +100,7 @@ const Featured = ({ url }) => {
                   onClick={() => toggleFeatured(dish)}
                   className={`featured-toggle-btn ${dish.isFeatured ? 'remove' : 'add'}`}
                 >
-                  {dish.isFeatured ? 'Remove from Home' : 'Set as Home Featured'}
+                  Remove from Home
                 </button>
               </div>
             </article>
