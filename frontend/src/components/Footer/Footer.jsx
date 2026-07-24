@@ -28,7 +28,8 @@ const Footer = () => {
             <p className="footer-address">
               5 Helen Joseph street<br />
               Johannesburg, Gauteng<br />
-              Tuesday — Sunday · 16:00 to 22:00
+              Wednesday - Sunday<br />
+              10:00 to 22:00
             </p>
           </div>
 

@@ -12,11 +12,10 @@ const Navbar = ({ url }) => {
   const [managerName, setManagerName] = useState('Manager');
   const [searchValue, setSearchValue] = useState('');
   const [orderAlerts, setOrderAlerts] = useState([]);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const profileMenuRef = useRef(null);
   const notificationRef = useRef(null);
-
-  const notificationCount = orderAlerts.length;
 
   const fetchStoreStatus = async () => {
     try {
@@ -36,14 +35,15 @@ const Navbar = ({ url }) => {
         return;
       }
 
-      const alerts = response.data.data
+      const processingOrders = response.data.data
         .filter((order) => {
           const status = (order.status || '').toLowerCase();
           return status === 'food processing' || status === 'food proocessing';
         })
-        .slice(0, 3);
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-      setOrderAlerts(alerts);
+      setNotificationCount(processingOrders.length);
+      setOrderAlerts(processingOrders.slice(0, 6));
     } catch (error) {
       // no-op to avoid toast noise during polling
     }

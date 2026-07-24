@@ -1,265 +1,189 @@
-# 🍽️ Restaurant Ordering System
+# Inkosi Restaurant Ordering System
 
-A full-stack restaurant ordering platform that connects customers, a backend database, payment integration, and an admin dashboard into one working system.
-'converting the repo to TypeScript'
-Tooling + config (both frontend and backend): 0.5–2 hours
-Batch renaming files: 0.1–0.5 hours (scripts/automation)
-Fixing runtime/type errors & adding types: 2–24+ hours depending on code complexity and strictness
-Full strict, well-typed migration: days (1–5+) for this multi-package repo
+Full-stack restaurant ordering platform with three apps:
 
-> Status: 🚧 In active development — core ordering flow is functional, additional UI polish and features are in progress.
+- Frontend customer app (React + Vite)
+- Admin dashboard (React + Vite)
+- Backend API (Node.js + Express + MongoDB)
 
----
+Status: active development
 
-## Table of Contents
+## What Is Implemented
 
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [1. Frontend — Customer Website](#1-frontend--customer-website)
-- [2. Backend — API & Business Logic](#2-backend--api--business-logic)
-- [3. Admin Panel — Restaurant Management](#3-admin-panel--restaurant-management)
-- [End-to-End Flow](#end-to-end-flow)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Roadmap / Planned Improvements](#roadmap--planned-improvements)
-- [Known Issues](#known-issues)
+### Customer app
 
----
+- Browse menu and featured dishes
+- Add/remove items from cart (including cart drawer)
+- Login and signup flow
+- Checkout with delivery details
+- Paystack payment redirect and verification
+- My Orders page
+- Closed-store popup shown before checkout when ordering is not available
 
-## Overview
+### Admin app
 
-This project is a full-stack restaurant ordering system with three main parts:
+- Add dishes with image upload
+- Edit dishes inline from list page
+- Remove dishes
+- Featured dishes management (max 4)
+- Order management with status updates
+- Order filtering (Processing, Out for delivery, Delivered)
+- Order search support by id/reference/customer/phone/item name
+- Store live toggle (Store Live / Kitchen Paused)
 
-- 🛒 A **customer-facing food ordering website**
-- ⚙️ A **backend API** that stores data and handles business logic
-- 🧑‍🍳 An **admin dashboard** for managing menu items and orders
+### Backend
 
-In simple terms, it lets customers browse dishes, add them to a cart, log in or sign up, place an order, pay through a payment gateway, and view their order history. It also gives restaurant staff a way to add or remove food items from the menu.
+- JWT auth and password hashing
+- Food, cart, user, order APIs
+- Featured food APIs
+- Store status API
+- Order placement guard rules:
+	- blocked when kitchen is paused
+	- blocked outside operating hours
 
----
+## Operating Rules
 
-## Tech Stack
+Orders are accepted only when both are true:
 
-| Layer | Technology |
-|---|---|
-| Frontend (Customer) | React, Vite |
-| Admin Panel | React |
-| Backend | Node.js, Express |
-| Database | MongoDB |
-| Authentication | JWT, bcrypt |
-| Payments | Paystack |
-| HTTP Client | Axios |
+- Store status is live
+- Current time is within operating hours
 
----
+Default operating hours:
+
+- 10:00 AM - 10:00 PM (all week)
+
+If closed, frontend shows a popup with reason:
+
+- Kitchen paused: "Kitchen isn't operational today. Please check back later."
+- Outside hours: "Restaurant is currently closed. Please place your order during operational hours."
 
 ## Project Structure
 
+```text
+Inkosi-Resturant-v1/
+	frontend/   Customer-facing app
+	admin/      Admin dashboard
+	backend/    API server
 ```
-restaurant-ordering-system/
-├── frontend/       # Customer-facing React app
-├── admin/          # Admin dashboard React app
-└── backend/        # Node.js/Express API + MongoDB
-```
 
----
+## Tech Stack
 
-## 1. Frontend — Customer Website
+- React
+- Vite
+- Node.js
+- Express
+- MongoDB + Mongoose
+- JWT + bcrypt
+- Axios
+- Paystack
 
-The frontend is the part users interact with. It's built with **React and Vite** and organized around a modern restaurant-style shopping experience.
+## API Summary
 
-### Main Customer Experience
+Base URL: `http://localhost:4000`
 
-- Home page with a hero section, menu categories, and featured dishes
-- Browse food items by category (salads, rolls, desserts, sandwiches, pasta, noodles)
-- Add items to cart with instant quantity updates
-- Cart page showing items, quantities, subtotal, delivery fee, and total cost
-- Checkout page collecting delivery details (name, address, email, phone, city)
-- Redirect to payment page after checkout
-- Post-payment verification step, followed by order history view
+### Food
 
-### Key Frontend Files
+- `POST /api/food/add`
+- `GET /api/food/list`
+- `GET /api/food/featured`
+- `POST /api/food/feature`
+- `POST /api/food/update`
+- `POST /api/food/remove`
 
-| File | Responsibility |
-|---|---|
-| `App.jsx` | Main routes — home, cart, checkout, verification, orders |
-| `StoreContext.jsx` | Central state manager — cart contents, food items list, user auth token, add/remove helpers, total calculations |
-| `LoginPopup.jsx` | Sign-up and login |
-| `Cart.jsx` | Displays cart, proceeds to checkout |
-| `PlaceOrder.jsx` | Collects delivery details, starts order process |
-| `MyOrders.jsx` | Displays customer's previous orders |
+### User
 
-### How It Works
+- `POST /api/user/register`
+- `POST /api/user/login`
+- `GET /api/user/profile`
 
-The frontend communicates with the backend via HTTP requests through **Axios** — fetching the menu, syncing cart updates, creating orders, and displaying order history.
+### Cart
 
----
+- `POST /api/cart/add`
+- `POST /api/cart/remove`
+- `GET /api/cart/get`
 
-## 2. Backend — API & Business Logic
+### Orders
 
-The backend is built with **Node.js, Express, and MongoDB**, acting as the central server for the whole application.
+- `POST /api/order/place`
+- `POST /api/order/verify`
+- `POST /api/order/userorders`
+- `GET /api/order/list`
+- `POST /api/order/status`
 
-### What It Does
+### Store status
 
-- Handles user registration and login
-- Stores and serves food items
-- Manages the shopping cart per user
-- Creates and tracks orders
-- Handles payment initialization with Paystack
-- Serves uploaded food images
+- `GET /api/store/status`
+- `POST /api/store/status`
 
-### Main Backend Structure
+`GET /api/store/status` returns fields used by frontend/admin checks:
 
-| File | Responsibility |
-|---|---|
-| `server.js` | Starts the server, connects to MongoDB, defines main API routes |
-| `foodRoute.js` | Add, list, and remove food items |
-| `userRoute.js` | User authentication |
-| `cartRoute.js` | Add/remove/get cart actions |
-| `orderRoute.js` | Place orders, verify payment, retrieve user orders |
+- `isStoreLive`
+- `isWithinOperatingHours`
+- `isAcceptingOrders`
+- `closedReason`
+- `operatingHours`
 
-### Core Backend Features
-
-- **Security:** passwords hashed with `bcrypt`, sessions secured with `JWT`
-- **Food items** stored in MongoDB with `name`, `description`, `price`, `category`, and `image` filename
-- **Orders** store user ID, ordered items, delivery address, amount, order status, and payment status
-- **Images** uploaded to the `uploads` folder and served publicly via the `/images` route
-
-### Payment Flow
-
-1. Order is saved to the database
-2. User's cart is cleared
-3. Backend creates a Paystack payment session
-4. Frontend redirects the user to the Paystack payment page
-
-This makes the app feel like a real online food delivery platform rather than just a simple demo.
-
----
-
-## 3. Admin Panel — Restaurant Management
-
-A separate React app designed for restaurant staff or owners.
-
-### What It Does
-
-- Add new food items to the menu
-- View all available food items
-- Remove food items from the menu
-- Manage orders
-
-### Admin Features
-
-| File | Responsibility |
-|---|---|
-| `App.jsx` | Admin routes for Add, List, and Orders pages |
-| `Add.jsx` | Form to add a new dish — name, description, price, category, image upload |
-| `List.jsx` | Displays all food items from the database, allows deletion |
-| `Sidebar.jsx` | Navigation between Add, List, and Orders pages |
-
-### Admin Workflow
-
-A restaurant manager can:
-
-1. Upload a new dish image
-2. Enter product details
-3. Send it to the backend
-4. See it immediately appear in the menu for customers
-
-This makes the admin app a simple but useful content management dashboard for the restaurant.
-
----
-
-## End-to-End Flow
-
-1. A customer opens the frontend website
-2. They browse food items and add dishes to the cart
-3. They sign up or log in
-4. They go to checkout, enter delivery details, and submit the order
-5. The backend saves the order and starts a payment process
-6. The customer pays through Paystack
-7. The order becomes marked as paid and appears in their order history
-8. The admin manages the menu and views orders through the admin app
-
----
-
-## Getting Started
+## Setup
 
 ### Prerequisites
 
-- Node.js (v18+ recommended)
-- MongoDB Atlas account (or local MongoDB instance)
-- Paystack account (test API keys)
+- Node.js 18+
+- MongoDB (Atlas or local)
+- Paystack account and test/live keys
 
-### Installation
-
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd restaurant-ordering-system
-
-# Install backend dependencies
-cd backend
-npm install
-
-# Install frontend dependencies
-cd ../frontend
-npm install
-npm install lucide-react
-
-# Install admin dependencies
-cd ../admin
-npm install
-```
-
-### Running Locally
+### 1) Install dependencies
 
 ```bash
-# Start backend (from /backend)
-npm run server
-
-# Start frontend (from /frontend)
-npm run dev
-
-# Start admin panel (from /admin)
-npm run dev
+cd backend && npm install
+cd ../frontend && npm install
+cd ../admin && npm install
 ```
 
----
+### 2) Configure backend env
 
-## Environment Variables
+Create `backend/.env`:
 
-Create a `.env` file in the `backend` directory with the following:
-
-```
-MONGODB_URI=your_mongodb_connection_string
+```env
+MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 PAYSTACK_SECRET_KEY=your_paystack_secret_key
 ```
 
-> ⚠️ Never commit your `.env` file to version control. Make sure it's listed in `.gitignore`.
+### 3) Run all apps
 
----
+Terminal 1:
 
-## Roadmap / Planned Improvements
+```bash
+cd backend
+npm run server
+```
 
-- [ ] UI polish across cart, checkout, and order history pages
-- [ ] Mobile responsiveness improvements
-- [ ] Order status tracking updates (e.g. preparing, out for delivery, delivered)
-- [ ] Admin order management page (currently placeholder)
-- [ ] Search and filter functionality for menu items
-- [ ] Loading and empty states across pages
-- [ ] Toast notifications for cart and order actions
-- [ ] Improved form validation on checkout
-- [ ] Deployment (frontend, backend, admin)
+Terminal 2:
 
----
+```bash
+cd frontend
+npm run dev
+```
 
-## Known Issues
+Terminal 3:
 
-- _List any current bugs or limitations here as you find them._
+```bash
+cd admin
+npm run dev
+```
 
----
+## Important Notes
+
+- Backend default port is `4000`.
+- Frontend redirect URL used in order flow is currently `http://localhost:5174`.
+- Uploaded images are served from `/images` and stored in `backend/uploads`.
+- If store availability behavior seems stale after code changes, restart backend and frontend dev servers.
+
+## Known Limitations
+
+- Store settings and staff management menu options in admin are placeholders.
+- Analytics section in admin is not implemented yet.
 
 ## License
 
-This project is currently unlicensed / for personal portfolio use.
+Personal/portfolio project.
