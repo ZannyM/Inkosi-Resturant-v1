@@ -1,6 +1,8 @@
 import foodModel from "../models/foodModel.js";
 import fs from 'fs'
 
+const MAX_FEATURED_DISHES = 4;
+
 //ADD FOOD ITEM
 
 const addfood =  async (req,res) => {
@@ -12,7 +14,9 @@ const addfood =  async (req,res) => {
         description:req.body.description,
         price:req.body.price,
         category:req.body.category,
-        image:image_filename
+        image:image_filename,
+        isFeatured: req.body.isFeatured === "true",
+        featuredUpdatedAt: req.body.isFeatured === "true" ? new Date() : null
     })
     try{
         //the food item will be saved in the database
@@ -23,6 +27,57 @@ const addfood =  async (req,res) => {
         res.json({success:false,message:"Error while adding food"})
     }
 
+}
+
+const listFeaturedFood = async (req, res) => {
+    try {
+        const featuredFoods = await foodModel
+            .find({ isFeatured: true })
+            .sort({ featuredUpdatedAt: -1 })
+            .limit(MAX_FEATURED_DISHES);
+
+        res.json({ success: true, data: featuredFoods });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: "Error while fetching featured food list" });
+    }
+}
+
+const updateFeaturedFood = async (req, res) => {
+    try {
+        const { id, isFeatured } = req.body;
+
+        if (!id || typeof isFeatured !== "boolean") {
+            return res.json({ success: false, message: "Food id and isFeatured are required" });
+        }
+
+        const food = await foodModel.findById(id);
+        if (!food) {
+            return res.json({ success: false, message: "Food item not found" });
+        }
+
+        if (isFeatured && !food.isFeatured) {
+            const featuredCount = await foodModel.countDocuments({ isFeatured: true });
+            if (featuredCount >= MAX_FEATURED_DISHES) {
+                return res.json({
+                    success: false,
+                    message: `You can only feature up to ${MAX_FEATURED_DISHES} dishes at once.`
+                });
+            }
+        }
+
+        food.isFeatured = isFeatured;
+        food.featuredUpdatedAt = isFeatured ? new Date() : null;
+        await food.save();
+
+        res.json({
+            success: true,
+            message: isFeatured ? "Dish added to featured list" : "Dish removed from featured list"
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: "Error updating featured dish" });
+    }
 }
 //all food list
 const listFood = async (req,res) => {
@@ -54,4 +109,4 @@ const removeFood = async (req,res) =>{
 }
 
 
-export {addfood, listFood, removeFood}
+export {addfood, listFood, removeFood, listFeaturedFood, updateFeaturedFood}

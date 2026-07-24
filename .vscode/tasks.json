@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "debug-backend-start",
+			"type": "shell",
+			"command": "cd backend; npm run server",
+			"isBackground": false
+		}
+	]
+}

@@ -37,3 +37,16 @@
     cursor: pointer;
     border-radius: 5px;
 }
+
+.add-featured-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4d4d4d;
+    font-size: 14px;
+}
+
+.add-featured-toggle input {
+    width: 16px;
+    height: 16px;
+}

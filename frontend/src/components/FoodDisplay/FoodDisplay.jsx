@@ -6,7 +6,7 @@ import FoodItem from '../FoodItem/FoodItem'
 const FoodDisplay = () => {
     const { food_list } = useContext(StoreContext)
 
-    const featured = food_list.slice(0, 4)
+    const featured = food_list.filter((dish) => dish.isFeatured).slice(0, 4)
 
     return (
         <section className="food-display" id="food-display">
@@ -19,16 +19,22 @@ const FoodDisplay = () => {
             </div>
 
             <div className="food-display-grid">
-                {featured.map((item, index) => (
-                    <FoodItem
-                        key={index}
-                        id={item._id}
-                        name={item.name}
-                        price={item.price}
-                        description={item.description}
-                        image={item.image}
-                    />
-                ))}
+                {featured.length === 0 ? (
+                    <div className="featured-empty-state">
+                        No featured dishes selected this week yet. Check back soon.
+                    </div>
+                ) : (
+                    featured.map((item) => (
+                        <FoodItem
+                            key={item._id}
+                            id={item._id}
+                            name={item.name}
+                            price={item.price}
+                            description={item.description}
+                            image={item.image}
+                        />
+                    ))
+                )}
             </div>
         </section>
     )

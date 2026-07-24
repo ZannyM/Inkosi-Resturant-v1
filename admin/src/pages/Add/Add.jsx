@@ -15,12 +15,13 @@ const Add = ({ url }) => {
         name: "",
         description: "",
         price: "",
-        category: "Salad"   //default category when i reload page
+        category: "Salad",   //default category when i reload page
+        isFeatured: false
     })
 
     const onChangeHandler = (event) => {
         const name = event.target.name;
-        const value = event.target.value;
+        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
         setData(data => ({ ...data, [name]: value }))
     }
 
@@ -29,7 +30,8 @@ const Add = ({ url }) => {
             name: "",
             description: "",
             price: "",
-            category: "Salad"
+            category: "Salad",
+            isFeatured: false
         })
         setImage(false)
         if (fileInputRef.current) {
@@ -44,6 +46,7 @@ const Add = ({ url }) => {
         formData.append("description", data.description)
         formData.append("price", Number(data.price))
         formData.append("category", data.category)
+        formData.append("isFeatured", data.isFeatured)
         formData.append("image", image)
         //we will call the api
         try {
@@ -104,6 +107,15 @@ const Add = ({ url }) => {
                         <input onChange={onChangeHandler} value={data.price} type="Number" name="price" placeholder='R229' />
                     </div>
                 </div>
+                <label className="add-featured-toggle">
+                    <input
+                        type="checkbox"
+                        name="isFeatured"
+                        checked={data.isFeatured}
+                        onChange={onChangeHandler}
+                    />
+                    Set as featured dish on home page
+                </label>
                 <button className='add-btn' type='submit'>ADD</button>
 
 

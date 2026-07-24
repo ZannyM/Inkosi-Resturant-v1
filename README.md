@@ -204,6 +204,7 @@ npm install
 # Install frontend dependencies
 cd ../frontend
 npm install
+npm install lucide-react
 
 # Install admin dependencies
 cd ../admin
