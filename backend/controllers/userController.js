@@ -20,7 +20,7 @@ const loginUser = async (req, res) => {
             return res.json({ success: false, message: "Invalid credentials" })
         }
         const token = createToken(user._id);
-        res.json({ success: true, token })
+        res.json({ success: true, token, user: { id: user._id, name: user.name, email: user.email } })
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: "Error" })
@@ -28,6 +28,20 @@ const loginUser = async (req, res) => {
     }
 
 
+}
+
+const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const user = await userModel.findById(userId).select('name email');
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' });
+        }
+        res.json({ success: true, user });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: 'Error' });
+    }
 }
 
 //data will be encrYPTED
@@ -70,7 +84,7 @@ const registerUser = async (req, res) => {
         //TAKE USER ID and generate token
         const token = createToken(user._id)
         //send token as a respose
-        res.json({ success: true, token })
+        res.json({ success: true, token, user: { id: user._id, name: user.name, email: user.email } })
 
 
 
@@ -82,4 +96,4 @@ const registerUser = async (req, res) => {
     }
 }
 
-export { loginUser, registerUser };
+export { loginUser, registerUser, getUserProfile };
