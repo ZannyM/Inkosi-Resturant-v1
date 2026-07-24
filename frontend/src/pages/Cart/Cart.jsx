@@ -2,14 +2,42 @@ import React, { useContext } from 'react'
 import './Cart.css'
 import { StoreContext } from '../../context/StoreContext'
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
+import RestaurantClosedPopup from '../../components/RestaurantClosedPopup/RestaurantClosedPopup';
 
 const Cart = () => {
 
   const { cartItems, food_list, removeFromCart, getTotalCartAmount, url, token } = useContext(StoreContext);
+  const [showClosedPopup, setShowClosedPopup] = useState(false);
+  const [closedMessage, setClosedMessage] = useState('');
+  const [operatingHours, setOperatingHours] = useState('10:00 AM - 10:00 PM (All week)');
 
   const navigate = useNavigate();
 
-  const handleProceedToCheckout = () => {
+  const openClosedPopup = (message, hours) => {
+    setClosedMessage(message || 'Restaurant is currently closed.');
+    setOperatingHours(hours || '10:00 AM - 10:00 PM (All week)');
+    setShowClosedPopup(true);
+  }
+
+  const isStoreClosed = (statusData) => {
+    if (!statusData) return false;
+    if (statusData.isAcceptingOrders === false) return true;
+    if (statusData.isStoreLive === false) return true;
+    if (statusData.closedReason === 'KITCHEN_PAUSED' || statusData.closedReason === 'OUTSIDE_OPERATING_HOURS') return true;
+    return false;
+  }
+
+  const getClosedMessage = (closedReason) => {
+    if (closedReason === 'KITCHEN_PAUSED') {
+      return "Kitchen isn't operational today. Please check back later.";
+    }
+
+    return 'Restaurant is currently closed. Please place your order during operational hours.';
+  }
+
+  const handleProceedToCheckout = async () => {
     if (!token) {
       navigate('/', {
         state: {
@@ -21,11 +49,32 @@ const Cart = () => {
       return;
     }
 
+    try {
+      const response = await axios.get(`${url}/api/store/status`);
+      const statusData = response?.data?.data;
+      if (response?.data?.success && isStoreClosed(statusData)) {
+        openClosedPopup(
+          getClosedMessage(statusData.closedReason),
+          statusData.operatingHours
+        );
+        return;
+      }
+    } catch (error) {
+      // Backend will still enforce closure at place-order time.
+    }
+
     navigate('/checkout');
   };
 
   return (
-    <div className='cart'>
+    <>
+      <RestaurantClosedPopup
+        open={showClosedPopup}
+        onClose={() => setShowClosedPopup(false)}
+        message={closedMessage}
+        operatingHours={operatingHours}
+      />
+      <div className='cart'>
       <div className="cart-items">
         <div className="cart-items-title">
           <p>Items</p>
@@ -90,7 +139,8 @@ const Cart = () => {
         </div>
       </div>
 
-    </div>
+      </div>
+    </>
   )
 }
 

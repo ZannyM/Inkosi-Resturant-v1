@@ -1,0 +1,75 @@
+.closed-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(20, 18, 16, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.closed-popup-card {
+  width: min(460px, 100%);
+  background: #fbf9f5;
+  border: 1px solid rgba(20, 18, 16, 0.12);
+  border-radius: 1rem;
+  padding: 1.2rem;
+  box-shadow: 0 25px 60px rgba(20, 18, 16, 0.24);
+}
+
+.closed-popup-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.7rem;
+  color: #7a6f66;
+}
+
+.closed-popup-card h3 {
+  margin-top: 0.4rem;
+  margin-bottom: 0.5rem;
+  color: #231f1b;
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: 1.7rem;
+  font-weight: 500;
+}
+
+.closed-popup-message {
+  color: #5a5149;
+  line-height: 1.55;
+}
+
+.closed-popup-hours {
+  margin-top: 0.9rem;
+  border: 1px solid rgba(20, 18, 16, 0.12);
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.closed-popup-hours span {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  color: #7b7067;
+}
+
+.closed-popup-hours strong {
+  color: #201b18;
+}
+
+.closed-popup-btn {
+  margin-top: 1rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--espresso, #141210);
+  color: #fbf9f5;
+  padding: 0.72rem 1.2rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  cursor: pointer;
+}

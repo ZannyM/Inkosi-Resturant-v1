@@ -1,10 +1,15 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { StoreContext } from '../../context/StoreContext';
 import './CartDrawer.css';
+import axios from 'axios';
+import RestaurantClosedPopup from '../RestaurantClosedPopup/RestaurantClosedPopup';
 
 export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, openLoginPrompt = () => {} }) {
   const { cartItems, food_list, addToCart, removeFromCart, url, token } = useContext(StoreContext);
+  const [showClosedPopup, setShowClosedPopup] = useState(false);
+  const [closedMessage, setClosedMessage] = useState('');
+  const [operatingHours, setOperatingHours] = useState('10:00 AM - 10:00 PM (All week)');
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : '';
@@ -35,11 +40,48 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
 
   const navigate = useNavigate();
 
-  const goToCheckout = () => {
+  const openClosedPopup = (message, hours) => {
+    setClosedMessage(message || 'Restaurant is currently closed.');
+    setOperatingHours(hours || '10:00 AM - 10:00 PM (All week)');
+    setShowClosedPopup(true);
+  }
+
+  const getClosedMessage = (closedReason) => {
+    if (closedReason === 'KITCHEN_PAUSED') {
+      return "Kitchen isn't operational today. Please check back later.";
+    }
+
+    return 'Restaurant is currently closed. Please place your order during operational hours.';
+  }
+
+  const isStoreClosed = (statusData) => {
+    if (!statusData) return false;
+    if (statusData.isAcceptingOrders === false) return true;
+    if (statusData.isStoreLive === false) return true;
+    if (statusData.closedReason === 'KITCHEN_PAUSED' || statusData.closedReason === 'OUTSIDE_OPERATING_HOURS') return true;
+    return false;
+  }
+
+  const goToCheckout = async () => {
     if (!token && cartList.length > 0) {
       setDrawerOpen(false);
       openLoginPrompt('You added items as a guest. Please log in to checkout.', '/checkout');
       return;
+    }
+
+    try {
+      const response = await axios.get(`${url}/api/store/status`);
+      const statusData = response?.data?.data;
+
+      if (response?.data?.success && isStoreClosed(statusData)) {
+        openClosedPopup(
+          getClosedMessage(statusData.closedReason),
+          statusData.operatingHours
+        );
+        return;
+      }
+    } catch (error) {
+      // Backend will still enforce closure at place-order time.
     }
 
     setDrawerOpen(false);
@@ -48,6 +90,12 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
 
   return (
     <>
+      <RestaurantClosedPopup
+        open={showClosedPopup}
+        onClose={() => setShowClosedPopup(false)}
+        message={closedMessage}
+        operatingHours={operatingHours}
+      />
       {/* Dims Backdrop */}
       <div
         onClick={() => setDrawerOpen(false)}

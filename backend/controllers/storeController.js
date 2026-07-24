@@ -1,4 +1,5 @@
 import storeSettingsModel from "../models/storeSettingsModel.js";
+import { OPERATING_HOURS_LABEL, isWithinOperatingHours } from "../utils/storeHours.js";
 
 const getStoreStatus = async (req, res) => {
     try {
@@ -8,7 +9,26 @@ const getStoreStatus = async (req, res) => {
             { upsert: true, new: true }
         );
 
-        res.json({ success: true, data: { isStoreLive: settings.isStoreLive } });
+        const withinOperatingHours = isWithinOperatingHours();
+        const isAcceptingOrders = settings.isStoreLive && withinOperatingHours;
+        let closedReason = null;
+
+        if (!settings.isStoreLive) {
+            closedReason = "KITCHEN_PAUSED";
+        } else if (!withinOperatingHours) {
+            closedReason = "OUTSIDE_OPERATING_HOURS";
+        }
+
+        res.json({
+            success: true,
+            data: {
+                isStoreLive: settings.isStoreLive,
+                isWithinOperatingHours: withinOperatingHours,
+                isAcceptingOrders,
+                closedReason,
+                operatingHours: OPERATING_HOURS_LABEL
+            }
+        });
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: "Error fetching store status" });

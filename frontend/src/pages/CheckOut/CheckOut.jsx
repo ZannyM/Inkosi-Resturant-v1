@@ -4,6 +4,7 @@ import { Lock, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
 import './CheckOut.css';
+import RestaurantClosedPopup from '../../components/RestaurantClosedPopup/RestaurantClosedPopup';
 
 const CheckOut = () => {
   const { getTotalCartAmount, token, food_list, cartItems, url, isInitialized } = useContext(StoreContext);
@@ -12,6 +13,9 @@ const CheckOut = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [showClosedPopup, setShowClosedPopup] = useState(false);
+  const [closedMessage, setClosedMessage] = useState('');
+  const [operatingHours, setOperatingHours] = useState('10:00 AM - 10:00 PM (All week)');
 
   // Form State containing all original delivery fields
   const [data, setData] = useState({
@@ -46,6 +50,46 @@ const CheckOut = () => {
   const isFormIncomplete = Object.values(data).some((val) => !val.trim());
   const disabled = isCartEmpty || isFormIncomplete || submitting;
 
+  const openClosedPopup = (message, hours) => {
+    setClosedMessage(message || 'Restaurant is currently closed.');
+    setOperatingHours(hours || '10:00 AM - 10:00 PM (All week)');
+    setShowClosedPopup(true);
+  }
+
+  const isStoreClosed = (statusData) => {
+    if (!statusData) return false;
+    if (statusData.isAcceptingOrders === false) return true;
+    if (statusData.isStoreLive === false) return true;
+    if (statusData.closedReason === 'KITCHEN_PAUSED' || statusData.closedReason === 'OUTSIDE_OPERATING_HOURS') return true;
+    return false;
+  }
+
+  const getClosedMessage = (closedReason) => {
+    if (closedReason === 'KITCHEN_PAUSED') {
+      return "Kitchen isn't operational today. Please check back later.";
+    }
+
+    return 'Restaurant is currently closed. Please place your order during operational hours.';
+  }
+
+  const canPlaceOrderNow = async () => {
+    try {
+      const response = await axios.get(`${url}/api/store/status`);
+      const statusData = response?.data?.data;
+      if (response?.data?.success && isStoreClosed(statusData)) {
+        openClosedPopup(
+          getClosedMessage(statusData.closedReason),
+          statusData.operatingHours
+        );
+        return false;
+      }
+    } catch (error) {
+      // If status check fails, backend /place endpoint still enforces closure.
+    }
+
+    return true;
+  }
+
   // Handle Redirect or Protection
   useEffect(() => {
     if (!isInitialized) return;
@@ -79,6 +123,11 @@ const CheckOut = () => {
     event.preventDefault();
     if (disabled) return;
 
+    const allowedToOrder = await canPlaceOrderNow();
+    if (!allowedToOrder) {
+      return;
+    }
+
     setSubmitting(true);
 
     const formattedItems = orderItemsList.map((item) => {
@@ -109,14 +158,26 @@ const CheckOut = () => {
       }
     } catch (error) {
       console.error("Checkout submission failed", error);
-      const message = error?.response?.data?.message || "Payment initiation failed. Please try again.";
-      alert(message);
+      const responseData = error?.response?.data;
+      if (responseData?.reason === 'KITCHEN_PAUSED' || responseData?.reason === 'OUTSIDE_OPERATING_HOURS') {
+        openClosedPopup(getClosedMessage(responseData?.reason), responseData?.operatingHours);
+      } else {
+        const message = responseData?.message || "Payment initiation failed. Please try again.";
+        alert(message);
+      }
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="checkout-container">
+    <>
+      <RestaurantClosedPopup
+        open={showClosedPopup}
+        onClose={() => setShowClosedPopup(false)}
+        message={closedMessage}
+        operatingHours={operatingHours}
+      />
+      <div className="checkout-container">
       <p className="eyebrow">Almost there</p>
       <h1 className="checkout-title">Checkout.</h1>
 
@@ -256,7 +317,8 @@ const CheckOut = () => {
           </div>
         </aside>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

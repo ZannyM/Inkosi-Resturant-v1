@@ -1,6 +1,7 @@
 import orderModel from "../models/orderModel.js";
 import userModel from '../models/userModel.js'
 import storeSettingsModel from "../models/storeSettingsModel.js";
+import { OPERATING_HOURS_LABEL, isWithinOperatingHours } from "../utils/storeHours.js";
 
 //Placing user order from frontend
 const placeOrder = async (req, res) => {
@@ -17,7 +18,18 @@ const placeOrder = async (req, res) => {
         if (!storeSettings.isStoreLive) {
             return res.status(503).json({
                 success: false,
-                message: "Store is currently paused and not accepting new orders."
+                reason: "KITCHEN_PAUSED",
+                operatingHours: OPERATING_HOURS_LABEL,
+                message: "Restaurant is currently closed. Operational hours are 10:00 AM - 10:00 PM, all week."
+            });
+        }
+
+        if (!isWithinOperatingHours()) {
+            return res.status(503).json({
+                success: false,
+                reason: "OUTSIDE_OPERATING_HOURS",
+                operatingHours: OPERATING_HOURS_LABEL,
+                message: "Restaurant is currently closed. Operational hours are 10:00 AM - 10:00 PM, all week."
             });
         }
 
