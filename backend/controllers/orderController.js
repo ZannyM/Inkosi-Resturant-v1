@@ -70,7 +70,7 @@ const verifyOrder = async (req, res) => {
         }
     } catch (error) {
         console.log("error");
-        res.json({success:true, message:"Error processing payment verification"})
+        res.json({success:false, message:"Error processing payment verification"})
     }
 
 }
