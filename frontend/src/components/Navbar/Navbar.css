@@ -180,6 +180,11 @@
   display: none;
 }
 
+.account-link-badge {
+  width: auto;
+  margin-right: 10px;
+}
+
 @media (min-width: 640px) {
   .account-link {
     display: inline-flex;

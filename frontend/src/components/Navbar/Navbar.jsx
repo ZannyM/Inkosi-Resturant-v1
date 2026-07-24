@@ -73,7 +73,7 @@ const Navbar = ({ setShowLogin, setDrawerOpen }) => {
             <button
               onClick={handleAccountClick}
               aria-label="Account"
-              className="icon-button account-link"
+              className={`icon-button account-link ${token && user ? 'account-link-badge' : ''}`}
               title={token ? "Open account menu" : "Sign In"}
             >
               {token && user ? (
