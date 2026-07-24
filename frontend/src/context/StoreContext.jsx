@@ -14,7 +14,9 @@ const StoreContextProvider = (props) => {
 
     const url = "http://localhost:4000"
     const [token, setToken] = useState("");
+    const [user, setUser] = useState(null);
     const [food_list, setFoodList] = useState([]);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
         localStorage.setItem("cartItems", JSON.stringify(cartItems));
@@ -72,6 +74,18 @@ const StoreContextProvider = (props) => {
             setCartItems({});
         }
     }
+
+    const loadUserProfile = async (token) => {
+        try {
+            const response = await axios.get(url + "/api/user/profile", { headers: { token } });
+            if (response?.data?.success) {
+                setUser(response.data.user);
+            }
+        } catch (error) {
+            console.error("Failed to load user profile", error);
+            setUser(null);
+        }
+    }
     //when reload webpage, it doesnt log out
     useEffect(() => {
         async function loadData() {
@@ -81,9 +95,12 @@ const StoreContextProvider = (props) => {
                 if (savedToken) {
                     setToken(savedToken);
                     await loadCartData(savedToken);
+                    await loadUserProfile(savedToken);
                 }
             } catch (error) {
                 console.error("Failed to initialize store data", error);
+            } finally {
+                setIsInitialized(true);
             }
         }
         loadData();
@@ -111,8 +128,11 @@ const StoreContextProvider = (props) => {
         url,
         token,
         setToken,
+        user,
+        setUser,
         drawerOpen,
-        setDrawerOpen
+        setDrawerOpen,
+        isInitialized
 
     }
     return (

@@ -1,0 +1,214 @@
+/* Modal Overlay */
+.login-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background-color: rgba(20, 18, 16, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 200ms ease-out;
+}
+
+/* Modal Box */
+.login-popup-card {
+  position: relative;
+  width: 100%;
+  max-width: 26rem; /* max-w-md scaled down slightly for popups */
+  border-radius: 1.5rem;
+  border: 1px solid rgba(20, 18, 16, 0.1);
+  background-color: #fcfbf9;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  color: var(--espresso, #141210);
+  font-family: var(--font-sans, 'Inter', -apple-system, sans-serif);
+  animation: scaleUp 200ms ease-out;
+}
+
+.login-popup-close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: transparent;
+  border: none;
+  color: #787571;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  transition: all 150ms ease;
+}
+
+.login-popup-close-btn:hover {
+  color: var(--espresso, #141210);
+  background-color: #f3efe6;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.login-popup-title {
+  font-family: var(--font-serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 2.25rem;
+  text-align: center;
+  font-weight: 400;
+  margin-top: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.login-popup-subtitle {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #787571;
+}
+
+/* Form Styles */
+.login-popup-form {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.popup-field {
+  display: block;
+}
+
+.field-caption {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #787571;
+  display: block;
+}
+
+.field-input {
+  margin-top: 0.25rem;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid rgba(20, 18, 16, 0.15);
+  background: transparent;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: inherit;
+  outline: none;
+  transition: border-color 200ms ease;
+}
+
+.field-input:focus {
+  border-bottom-color: var(--gold, #d4af37);
+}
+
+/* Primary Submit Button */
+.btn-popup-submit {
+  width: 100%;
+  border-radius: 9999px;
+  background-color: var(--espresso, #141210);
+  color: #fbf9f5;
+  padding: 0.875rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.btn-popup-submit:hover:not(:disabled) {
+  background-color: var(--gold, #d4af37);
+  color: var(--espresso, #141210);
+}
+
+.btn-popup-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Divider */
+.login-popup-divider {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.divider-line {
+  height: 1px;
+  flex: 1;
+  background-color: rgba(20, 18, 16, 0.1);
+}
+
+.divider-text {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #787571;
+}
+
+/* Google Button */
+.btn-popup-google {
+  margin-top: 1.25rem;
+  width: 100%;
+  border-radius: 9999px;
+  border: 1px solid rgba(20, 18, 16, 0.15);
+  background: transparent;
+  padding: 0.875rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.btn-popup-google:hover {
+  background-color: #f3efe6;
+}
+
+/* Mode Switch Prompt */
+.login-popup-switch-prompt {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #787571;
+}
+
+.login-popup-switch-btn {
+  background: transparent;
+  border: none;
+  color: var(--espresso, #141210);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
+}
+
+.login-popup-switch-btn:hover {
+  color: var(--gold, #d4af37);
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

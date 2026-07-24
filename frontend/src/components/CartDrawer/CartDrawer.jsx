@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { StoreContext } from '../../context/StoreContext';
 import './CartDrawer.css';
 
-export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => {} }) {
-  const { cartItems, food_list, addToCart, removeFromCart, url } = useContext(StoreContext);
+export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, openLoginPrompt = () => {} }) {
+  const { cartItems, food_list, addToCart, removeFromCart, url, token } = useContext(StoreContext);
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : '';
@@ -30,6 +31,19 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => {} }) {
     for (let i = 0; i < currentQty; i++) {
       removeFromCart(id);
     }
+  };
+
+  const navigate = useNavigate();
+
+  const goToCheckout = () => {
+    if (!token && cartList.length > 0) {
+      setDrawerOpen(false);
+      openLoginPrompt('You added items as a guest. Please log in to checkout.', '/checkout');
+      return;
+    }
+
+    setDrawerOpen(false);
+    navigate('/checkout');
   };
 
   return (
@@ -129,7 +143,7 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => {} }) {
                             </svg>
                           </button>
                         </div>
-                        
+
                         <p className="item-price">R{item.price.toFixed(2)} each</p>
 
                         <div className="item-footer">
@@ -179,13 +193,13 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => {} }) {
                 <span className="total-amount">R{grandTotal.toFixed(2)}</span>
               </div>
 
-              <a
-                href="/orders"
-                onClick={() => setDrawerOpen(false)}
+              <button
+                type="button"
                 className="btn-checkout"
+                onClick={goToCheckout}
               >
                 PROCEED TO CHECKOUT
-              </a>
+              </button>
             </div>
           </>
         )}

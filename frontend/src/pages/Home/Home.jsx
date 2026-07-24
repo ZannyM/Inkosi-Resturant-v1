@@ -3,7 +3,7 @@ import './Home.css'
 import Header from '../../components/Header/Header'
 import ExploreMenu from '../../components/ExploreMenu/ExploreMenu'
 import FoodDisplay from '../../components/FoodDisplay/FoodDisplay'
-import Editorial from '../../components/AppDownload/Editorial'
+import Editorial from '../../components/Editorial/Editorial'
 
 const Home = () => {
   //please look up why we add this line of code

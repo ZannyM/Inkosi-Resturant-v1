@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { StoreContext } from '../../context/StoreContext';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Home' },
   { path: '/menu', label: 'Menu' },
-  { path: '/orders', label: 'Order' },
+  { path: '/myorders', label: 'Orders' },
 ];
 
-const Navbar = ({ setDrawerOpen }) => {
+const Navbar = ({ setShowLogin, setDrawerOpen }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const { getTotalCartCount } = useContext(StoreContext);
+  const { getTotalCartCount, token, setToken, user } = useContext(StoreContext);
   const cartCount = getTotalCartCount ? getTotalCartCount() : 0;
 
   const currentPath = location.pathname;
@@ -27,6 +28,22 @@ const Navbar = ({ setDrawerOpen }) => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken('');
+    navigate('/');
+  };
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleAccountClick = () => {
+    if (!token) {
+      setShowLogin(true);
+      return;
+    }
+    setDropdownOpen((prev) => !prev);
+  };
 
   return (
     <>
@@ -52,13 +69,32 @@ const Navbar = ({ setDrawerOpen }) => {
           </nav>
 
           <div className="navbar-actions">
-            {/* Account Icon */}
-            <Link to="/auth" aria-label="Account" className="icon-button account-link">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </Link>
+            {/* Account Action Button */}
+            <button
+              onClick={handleAccountClick}
+              aria-label="Account"
+              className="icon-button account-link"
+              title={token ? "Open account menu" : "Sign In"}
+            >
+              {token && user ? (
+                <span className="navbar-user-badge">Hi {user.name.split(' ')[0]}</span>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              )}
+            </button>
+            {dropdownOpen && token && (
+              <div className="navbar-account-dropdown">
+                <button type="button" className="dropdown-item" onClick={() => { setDropdownOpen(false); navigate('/myorders'); }}>
+                  My Orders
+                </button>
+                <button type="button" className="dropdown-item" onClick={() => { setDropdownOpen(false); handleLogout(); }}>
+                  Logout
+                </button>
+              </div>
+            )}
 
             {/* Cart Icon with Counter Badge */}
             <button 
@@ -111,7 +147,7 @@ const Navbar = ({ setDrawerOpen }) => {
           </button>
         </div>
         <nav className="mobile-overlay-nav">
-          {NAV_ITEMS.concat({ path: '/auth', label: 'Account' }).map((item) => (
+          {NAV_ITEMS.map((item) => (
             <Link 
               key={item.path} 
               to={item.path} 
@@ -121,6 +157,20 @@ const Navbar = ({ setDrawerOpen }) => {
               {item.label}
             </Link>
           ))}
+          <button
+            className="mobile-nav-link"
+            style={{ background: 'none', border: 'none', textTransform: 'uppercase', cursor: 'pointer', textAlign: 'left', padding: 0 }}
+            onClick={() => {
+              setMobileOpen(false);
+              if (!token) {
+                setShowLogin(true);
+              } else {
+                handleLogout();
+              }
+            }}
+          >
+            {token ? 'Logout' : 'Account'}
+          </button>
         </nav>
       </div>
     </>
