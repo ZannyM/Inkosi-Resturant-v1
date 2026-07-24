@@ -1,9 +1,38 @@
-/* .list-table-format {
+.list {
+  width: min(100%, 980px);
+  margin: 1rem 1.25rem 1.25rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 1.4rem;
+}
+
+.list > p {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--espresso);
+  margin-bottom: 1rem;
+}
+
+.list-table {
+  border: 1px solid rgba(20, 18, 16, 0.1);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.list-table-format {
   display: grid;
-  grid-template-columns: 70px 1.5fr 1fr 0.8fr 50px;
+  grid-template-columns: 0.6fr 2fr 1fr 1fr 1fr 0.5fr;
   align-items: center;
   gap: 10px;
-  padding: 10px 0;
+  padding: 12px 15px;
+  border-bottom: 1px solid rgba(20, 18, 16, 0.08);
+  font-size: 13px;
+}
+
+.list-table-format:last-child {
+  border-bottom: none;
 }
 
 .list-table-format img {
@@ -11,37 +40,31 @@
   height: 60px;
   object-fit: cover;
   border-radius: 8px;
-} */
-.list-table-format{
-    display: grid;
-  grid-template-columns: 0.6fr 2fr 1fr 1fr 1fr 0.5fr;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 15px;
-    border: 1px solid #cacaca;
-    font-size: 13px;
+}
 
+.list-table-format.title {
+  background-color: #f6f2eb;
+  color: #5a4f46;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
-.list-table-format img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
+
+@media (max-width:600px) {
+  .list-table-format {
+    grid-template-columns: 1fr 3fr 1fr;
+    gap: 15px;
+  }
+
+  .list-table-format.title {
+    display: none;
+  }
 }
-.list-table-format.title{
-    background-color: #f9f9f9;
-}
-@media (max-width:600px){
-    .list-table-format{
-        grid-template-columns: 1fr 3fr 1fr;
-        gap: 15px;
-    }
-    .list-table-format.title{
-        display: none;
-    }
-}
-.cursor{
-    cursor: pointer;
+
+.cursor {
+  cursor: pointer;
+  color: #c54822;
+  font-weight: 600;
 }
 
 .list-featured-badge {
@@ -60,4 +83,12 @@
 .list-featured-badge.active {
   background: #fff0ed;
   color: #c73a14;
+}
+
+@media (max-width: 900px) {
+  .list {
+    margin: 0.8rem;
+    padding: 1rem;
+    width: calc(100% - 1.6rem);
+  }
 }

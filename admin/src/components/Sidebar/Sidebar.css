@@ -1,39 +1,88 @@
 .sidebar {
-    width: 18%;
-    min-height: 100vh;
-    border: 1.5px solid #a9a9a9;
-    border-top: 0;
-    font-size: max(1vw, 10px);
+    width: 250px;
+    min-height: calc(100vh - 84px);
+    border: 1px solid var(--line);
+    background: rgba(252, 251, 249, 0.96);
+    border-radius: 0 1rem 1rem 0;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    font-size: 0.92rem;
+    position: sticky;
+    top: 96px;
 }
 
 .sidebar-options {
-    padding-top: 50px;
-    padding-left: 20%;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0.65rem;
 }
 
 .sidebar-option {
     display: flex;
     align-items: center;
     gap: 12px;
-    border: 1px solid #a9a9a9;
-    border-right: 0;
-    padding: 8px 10px;
-    border-radius: 3px 0px 0px 3px;
+    border: 1px solid transparent;
+    padding: 0.65rem 0.8rem;
+    border-radius: 0.8rem;
     cursor: pointer;
-     text-decoration: none;
+    text-decoration: none;
     color: inherit;
+    transition: all 180ms ease;
+}
+
+.sidebar-option img {
+    width: 18px;
+    opacity: 0.72;
+}
+
+.sidebar-option p {
+    font-size: 0.84rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #5f554c;
+    font-weight: 500;
+}
+
+.sidebar-option:hover {
+    border-color: var(--line);
+    background: #f5f1ea;
 }
 
 .sidebar-option.active {
-    background-color: #fff0ed;
-    border-color: tomato;
+    background: linear-gradient(180deg, #fdf4ea 0%, #f7efe4 100%);
+    border-color: rgba(212, 175, 55, 0.38);
+    box-shadow: 0 8px 22px -14px rgba(20, 18, 16, 0.35);
 }
+
+.sidebar-option.active p {
+    color: var(--espresso);
+    font-weight: 600;
+}
+
+.sidebar-option.active img {
+    opacity: 1;
+}
+
 /* media query for a responsive website */
 @media (max-width:900px) {
+    .sidebar {
+        width: 82px;
+        margin-left: 0.5rem;
+        margin-right: 0;
+    }
+
+    .sidebar-options {
+        padding: 0.8rem;
+        align-items: center;
+    }
+
     .sidebar-option p {
         display: none;
+    }
+
+    .sidebar-option {
+        justify-content: center;
+        width: 100%;
     }
 }

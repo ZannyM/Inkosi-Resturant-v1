@@ -1,14 +1,31 @@
-.navbar{
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 4%;
-
+    padding: 0 2.5rem;
+    height: 84px;
+    background: rgba(247, 244, 238, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
 }
-.navbar .logo{
-    width: max(10%, 80px);
 
+.navbar .logo {
+    width: max(10%, 92px);
+    filter: contrast(1.02) saturate(0.95);
 }
-.navbar .profile{
-    width: 40px;
+
+.navbar .profile {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid rgba(20, 18, 16, 0.18);
+    background: #fff;
+    padding: 2px;
+}
+
+@media (max-width: 900px) {
+    .navbar {
+        padding: 0 1rem;
+        height: 76px;
+    }
 }

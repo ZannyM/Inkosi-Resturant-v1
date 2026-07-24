@@ -1,6 +1,6 @@
 .featured-page {
-  width: 76%;
-  margin-top: 40px;
+  width: 100%;
+  margin-top: 0;
 }
 
 .featured-header {
@@ -12,12 +12,15 @@
 }
 
 .featured-header h2 {
-  margin: 6px 0;
-  color: #272727;
+  margin: 0.4rem 0;
+  color: var(--espresso);
+  font-family: var(--font-serif);
+  font-size: 2.1rem;
+  font-weight: 500;
 }
 
 .featured-header p {
-  color: #666;
+  color: #6f655d;
   max-width: 70ch;
 }
 
@@ -49,7 +52,7 @@
 }
 
 .featured-card {
-  border: 1px solid #e7e7e7;
+  border: 1px solid rgba(20, 18, 16, 0.1);
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
@@ -78,8 +81,9 @@
 }
 
 .featured-card-topline h3 {
-  font-size: 16px;
+  font-size: 1.03rem;
   color: #2f2f2f;
+  font-family: var(--font-serif);
 }
 
 .featured-card-meta {
@@ -113,8 +117,8 @@
 }
 
 .featured-toggle-btn.add {
-  background: #1f1f1f;
-  color: #fff;
+  background: var(--espresso);
+  color: var(--cream);
 }
 
 .featured-toggle-btn.remove {
@@ -122,10 +126,15 @@
   color: #bf3f1b;
 }
 
+.featured-toggle-btn.add:hover {
+  background: var(--gold);
+  color: var(--espresso);
+}
+
 @media (max-width: 900px) {
   .featured-page {
     width: 100%;
-    margin-left: 12px;
-    margin-right: 12px;
+    margin-left: 0;
+    margin-right: 0;
   }
 }

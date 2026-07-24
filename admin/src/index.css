@@ -1,32 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap');
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
-*{
+:root {
+  --espresso: #141210;
+  --cream: #fbf9f5;
+  --cream-bg: #f7f4ee;
+  --gold: #d4af37;
+  --muted: #7f756b;
+  --line: rgba(20, 18, 16, 0.12);
+  --card: #fcfbf9;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: Outfit;
-
+  font-family: var(--font-sans);
 }
-body{
+
+body {
   min-height: 100vh;
-  background-color: #fcfcfc;
-
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.14), transparent 35%),
+    var(--cream-bg);
+  color: var(--espresso);
 }
-a{
+
+a {
   text-decoration: none;
   color: inherit;
 }
-hr{
+
+hr {
   border: none;
   height: 1px;
-  background-color: #a9a9a9;
+  background-color: var(--line);
 }
 
-.app-content{
+.app-content {
   display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
 }
 
-.flex-col{
+.flex-col {
   display: flex;
   flex-direction: column;
   gap: 10px;
