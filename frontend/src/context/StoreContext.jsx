@@ -12,7 +12,7 @@ const StoreContextProvider = (props) => {
 
     const [drawerOpen, setDrawerOpen] = useState(false)
 
-    const url = "http://localhost:4000"
+    const url = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:4000`
     const [token, setToken] = useState("");
     const [user, setUser] = useState(null);
     const [food_list, setFoodList] = useState([]);

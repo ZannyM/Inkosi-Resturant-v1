@@ -6,7 +6,7 @@ import { OPERATING_HOURS_LABEL, isWithinOperatingHours } from "../utils/storeHou
 //Placing user order from frontend
 const placeOrder = async (req, res) => {
 
-    const frontend_url = "http://localhost:5174"
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5174"
 
     try {
         const storeSettings = await storeSettingsModel.findOneAndUpdate(
@@ -65,7 +65,7 @@ const placeOrder = async (req, res) => {
                 email: req.body.address?.email || "customer@example.com",
                 amount: amountInKobo,
                 reference,
-                callback_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
+                callback_url: `${frontendUrl}/verify?success=true&orderId=${newOrder._id}`,
                 metadata: {
                     orderId: String(newOrder._id),
                     userId: String(req.body.userId)
