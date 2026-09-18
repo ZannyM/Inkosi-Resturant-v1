@@ -1,6 +1,7 @@
 import "dotenv/config"
 import express from "express"
 import cors from "cors"
+import fs from "fs"
 import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/foodRoute.js"
 import userRouter from "./routes/userRoute.js"
@@ -13,7 +14,12 @@ console.log("Paystack key loaded:", process.env.PAYSTACK_SECRET_KEY ? "YES" : "N
 console.log("Mongo URI loaded:", process.env.MONGO_URI ? "YES" : "NO");
 //app config
 const app = express()
-const port = 4000
+const port = process.env.PORT || 4000
+
+// Ensure the uploads folder exists before multer tries to write to it
+if (!fs.existsSync("uploads")) {
+    fs.mkdirSync("uploads", { recursive: true });
+}
 
 //middleware
 app.use(express.json())

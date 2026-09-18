@@ -27,20 +27,24 @@ const parseCustomization = (raw) => {
 //ADD FOOD ITEM
 
 const addfood =  async (req,res) => {
-//we store the uploaded file in the image_filename image
-    let image_filename = `${req.file.filename}`;
+    try {
+        if (!req.file) {
+            return res.json({ success: false, message: "Image upload is required" });
+        }
+        //we store the uploaded file in the image_filename image
+        let image_filename = `${req.file.filename}`;
 
-    const food = new foodModel({
-        name:req.body.name,
-        description:req.body.description,
-        price:req.body.price,
-        category:req.body.category,
-        image:image_filename,
-        isFeatured: req.body.isFeatured === "true",
-        featuredUpdatedAt: req.body.isFeatured === "true" ? new Date() : null,
-        customization: parseCustomization(req.body.customization)
-    })
-    try{
+        const food = new foodModel({
+            name:req.body.name,
+            description:req.body.description,
+            price:req.body.price,
+            category:req.body.category,
+            image:image_filename,
+            isFeatured: req.body.isFeatured === "true",
+            featuredUpdatedAt: req.body.isFeatured === "true" ? new Date() : null,
+            customization: parseCustomization(req.body.customization)
+        })
+
         //the food item will be saved in the database
         await food.save();
         res.json({success:true,message:"Food Added succesfylly"})
