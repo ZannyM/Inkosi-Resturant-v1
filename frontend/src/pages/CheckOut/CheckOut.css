@@ -238,6 +238,13 @@
   color: #787571;
 }
 
+.summary-item-customization {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: #787571;
+  margin-top: 2px;
+}
+
 .summary-item-price {
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;

@@ -23,6 +23,12 @@
 .cart-items-item .cross{
     cursor: pointer;
 }
+.cart-item-customization{
+    font-size: 0.75rem;
+    font-style: italic;
+    color: grey;
+    margin: 2px 0 0;
+}
 .cart-bottom{
     margin-top: 80px;
     display: flex;

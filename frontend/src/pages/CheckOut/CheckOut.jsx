@@ -7,7 +7,7 @@ import './CheckOut.css';
 import RestaurantClosedPopup from '../../components/RestaurantClosedPopup/RestaurantClosedPopup';
 
 const CheckOut = () => {
-  const { getTotalCartAmount, token, food_list, cartItems, url, isInitialized } = useContext(StoreContext);
+  const { getTotalCartAmount, token, getCartDetails, url, isInitialized } = useContext(StoreContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,10 +36,7 @@ const CheckOut = () => {
   };
 
   // Calculate cart items list dynamically
-  const orderItemsList = (food_list || []).filter((item) => {
-    const id = item._id || item.id;
-    return cartItems[id] > 0;
-  });
+  const orderItemsList = getCartDetails();
 
   const subtotal = getTotalCartAmount();
   const deliveryFee = subtotal > 0 ? 35 : 0; // Standard R35 delivery fee
@@ -130,13 +127,16 @@ const CheckOut = () => {
 
     setSubmitting(true);
 
-    const formattedItems = orderItemsList.map((item) => {
-      const id = item._id || item.id;
-      return {
-        ...item,
-        quantity: cartItems[id]
-      };
-    });
+    const formattedItems = orderItemsList.map((item) => ({
+      _id: item._id,
+      name: item.name,
+      image: item.image,
+      price: item.price,
+      quantity: item.quantity,
+      addOns: item.addOns,
+      spiceLevel: item.spiceLevel,
+      notes: item.notes
+    }));
 
     const orderData = {
       address: data,
@@ -201,7 +201,6 @@ const CheckOut = () => {
           <div className="mobile-summary-content">
             <SummaryBody
               items={orderItemsList}
-              cartItems={cartItems}
               subtotal={subtotal}
               deliveryFee={deliveryFee}
               grandTotal={grandTotal}
@@ -308,7 +307,6 @@ const CheckOut = () => {
           <div className="summary-wrapper">
             <SummaryBody
               items={orderItemsList}
-              cartItems={cartItems}
               subtotal={subtotal}
               deliveryFee={deliveryFee}
               grandTotal={grandTotal}
@@ -323,23 +321,28 @@ const CheckOut = () => {
 };
 
 // Internal Helper Components
-function SummaryBody({ items, cartItems, subtotal, deliveryFee, grandTotal, url }) {
+function SummaryBody({ items, subtotal, deliveryFee, grandTotal, url }) {
   return (
     <>
       <ul className="summary-items-list">
         {items.map((item) => {
-          const id = item._id || item.id;
-          const qty = cartItems[id];
           const imgUrl = url ? `${url}/images/${item.image}` : item.image;
 
           return (
-            <li key={id} className="summary-item">
+            <li key={item.cartKey} className="summary-item">
               <img src={imgUrl} alt={item.name} className="summary-item-img" />
               <div className="summary-item-info">
                 <p className="summary-item-name">{item.name}</p>
-                <p className="summary-item-qty">Qty {qty}</p>
+                <p className="summary-item-qty">Qty {item.quantity}</p>
+                {(item.addOns.length > 0 || item.spiceLevel || item.notes) && (
+                  <p className="summary-item-customization">
+                    {item.addOns.map((a) => a.name).join(', ')}
+                    {item.spiceLevel ? `${item.addOns.length > 0 ? ' · ' : ''}${item.spiceLevel}` : ''}
+                    {item.notes ? ` · Note: ${item.notes}` : ''}
+                  </p>
+                )}
               </div>
-              <span className="summary-item-price">R{(item.price * qty).toFixed(2)}</span>
+              <span className="summary-item-price">R{item.lineTotal.toFixed(2)}</span>
             </li>
           );
         })}

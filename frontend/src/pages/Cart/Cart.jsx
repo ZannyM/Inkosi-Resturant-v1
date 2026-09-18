@@ -8,7 +8,7 @@ import RestaurantClosedPopup from '../../components/RestaurantClosedPopup/Restau
 
 const Cart = () => {
 
-  const { cartItems, food_list, removeFromCart, getTotalCartAmount, url, token } = useContext(StoreContext);
+  const { getCartDetails, clearCartItem, getTotalCartAmount, url, token } = useContext(StoreContext);
   const [showClosedPopup, setShowClosedPopup] = useState(false);
   const [closedMessage, setClosedMessage] = useState('');
   const [operatingHours, setOperatingHours] = useState('10:00 AM - 10:00 PM (All week)');
@@ -86,26 +86,28 @@ const Cart = () => {
         </div>
         <br />
         <hr />
-        {food_list.map((item, index) => {
-          if (cartItems[item._id] > 0) {
-            return (
+        {getCartDetails().map((item) => (
+          <div key={item.cartKey}>
+            <div className="cart-items-title cart-items-item">
+              <img src={url+"/images/"+item.image} alt="" />
               <div>
-                <div className="cart-items-title cart-items-item">
-                  <img src={url+"/images/"+item.image} alt="" />
-                  <p>{item.name}</p>
-                  <p>R{item.price}</p>
-                  <p>{cartItems[item._id]}</p>
-                  <p>R{item.price * cartItems[item._id]}</p>
-                  <p onClick={() => removeFromCart(item._id)} className='cross'>x</p>
-                </div>
-                <hr />
-
+                <p>{item.name}</p>
+                {(item.addOns.length > 0 || item.spiceLevel || item.notes) && (
+                  <p className="cart-item-customization">
+                    {item.addOns.map((a) => a.name).join(', ')}
+                    {item.spiceLevel ? `${item.addOns.length > 0 ? ' · ' : ''}${item.spiceLevel}` : ''}
+                    {item.notes ? ` · Note: ${item.notes}` : ''}
+                  </p>
+                )}
               </div>
-
-            )
-          }
-
-        })}
+              <p>R{item.price.toFixed(2)}</p>
+              <p>{item.quantity}</p>
+              <p>R{item.lineTotal.toFixed(2)}</p>
+              <p onClick={() => clearCartItem(item.cartKey)} className='cross'>x</p>
+            </div>
+            <hr />
+          </div>
+        ))}
       </div>
       <div className="cart-bottom">
         <div className="cart-total">

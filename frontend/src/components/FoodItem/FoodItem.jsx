@@ -1,14 +1,19 @@
 import React, { useContext } from 'react'
 import './FoodItem.css'
+import { useNavigate } from 'react-router-dom'
 import { assets } from '../../assets/assets'
 import { StoreContext } from '../../context/StoreContext'
 
 const FoodItem = ({ id, name, price, description, image }) => {
     const { cartItems, addToCart, removeFromCart, url } = useContext(StoreContext)
+    const navigate = useNavigate();
+    const quantity = cartItems[id]?.quantity || 0;
+
+    const goToDetails = () => navigate(`/food/${id}`);
 
     return (
         <article className="food-item">
-            <div className="food-item-img-wrap">
+            <div className="food-item-img-wrap" onClick={goToDetails} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && goToDetails()}>
                 <img
                     className="food-item-image"
                     src={url + "/images/" + image}
@@ -17,10 +22,10 @@ const FoodItem = ({ id, name, price, description, image }) => {
                 />
                 <div className="food-item-overlay" />
 
-                {!cartItems[id] ? (
+                {quantity === 0 ? (
                     <button
                         className="food-item-add-btn"
-                        onClick={() => addToCart(id)}
+                        onClick={(e) => { e.stopPropagation(); addToCart(id); }}
                         aria-label={`Add ${name} to cart`}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -30,13 +35,13 @@ const FoodItem = ({ id, name, price, description, image }) => {
                         Add
                     </button>
                 ) : (
-                    <div className="food-item-counter">
+                    <div className="food-item-counter" onClick={(e) => e.stopPropagation()}>
                         <img
                             onClick={() => removeFromCart(id)}
                             src={assets.remove_icon_red}
                             alt="Remove one"
                         />
-                        <p>{cartItems[id]}</p>
+                        <p>{quantity}</p>
                         <img
                             onClick={() => addToCart(id)}
                             src={assets.add_icon_green}
@@ -47,10 +52,13 @@ const FoodItem = ({ id, name, price, description, image }) => {
             </div>
 
             <div className="food-item-info">
-                <h3 className="food-item-name">{name}</h3>
+                <h3 className="food-item-name" onClick={goToDetails} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && goToDetails()}>{name}</h3>
                 <span className="food-item-price">R{price}</span>
             </div>
             <p className="food-item-desc">{description}</p>
+            <button type="button" className="food-item-customize-link" onClick={goToDetails}>
+                Customize &amp; view details &rarr;
+            </button>
         </article>
     )
 }

@@ -8,7 +8,28 @@
   border-radius: 16px;
   background: var(--muted, #f0ece6);
   aspect-ratio: 4 / 5;
+  cursor: pointer;
 }
+
+.food-item-name {
+  cursor: pointer;
+}
+
+.food-item-customize-link {
+  background: none;
+  border: none;
+  padding: 4px 0 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--gold, #a97a3f);
+  cursor: pointer;
+  text-align: left;
+}
+
+.food-item-customize-link:hover {
+  text-decoration: underline;
+}
+
 
 .food-item-image {
   width: 100%;

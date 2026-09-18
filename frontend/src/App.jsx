@@ -13,6 +13,7 @@ import MyOrders from './pages/MyOrders/MyOrders';
 import Menu from './pages/Menu/Menu';
 import CheckOut from './pages/CheckOut/CheckOut';
 import Confirmation from './pages/Confirmation/Confirmation';
+import FoodDetails from './pages/FoodDetails/FoodDetails';
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -71,6 +72,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/menu" element={<Menu />} />
+            <Route path="/food/:id" element={<FoodDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<CheckOut />} />
             <Route path="/verify" element={<Verify />} />

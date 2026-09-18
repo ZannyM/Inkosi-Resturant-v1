@@ -114,12 +114,13 @@ const Orders = ({ url }) => {
               <p className="order-item-reference">Ref: {order.paystackReference || "N/A"}</p>
               <p className='order-item-food'>
                 {order.items.map((item, index) => {
-                  if (index === order.items.length - 1) {
-                    return item.name + " X " + item.quantity
-                  } else {
-                    return item.name + " X " + item.quantity + ","
-                  }
-
+                  const customization = [
+                    ...(item.addOns || []).map((a) => a.name),
+                    item.spiceLevel,
+                    item.notes ? `Note: ${item.notes}` : null
+                  ].filter(Boolean).join(', ');
+                  const label = `${item.name} X ${item.quantity}${customization ? ` (${customization})` : ''}`;
+                  return index === order.items.length - 1 ? label : `${label}, `;
                 })}</p>
               <p className="order-item-name">
                 {order.address.firstName + " " + order.address.lastName}

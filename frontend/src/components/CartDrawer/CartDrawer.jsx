@@ -6,7 +6,7 @@ import axios from 'axios';
 import RestaurantClosedPopup from '../RestaurantClosedPopup/RestaurantClosedPopup';
 
 export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, openLoginPrompt = () => {} }) {
-  const { cartItems, food_list, addToCart, removeFromCart, url, token } = useContext(StoreContext);
+  const { getCartDetails, addToCart, removeFromCart, clearCartItem, url, token } = useContext(StoreContext);
   const [showClosedPopup, setShowClosedPopup] = useState(false);
   const [closedMessage, setClosedMessage] = useState('');
   const [operatingHours, setOperatingHours] = useState('10:00 AM - 10:00 PM (All week)');
@@ -18,24 +18,15 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
     };
   }, [drawerOpen]);
 
-  const cartList = (food_list || []).filter((item) => {
-    const itemId = item._id || item.id;
-    return cartItems[itemId] > 0;
-  });
+  const cartList = getCartDetails();
 
-  const subtotal = cartList.reduce((acc, item) => {
-    const itemId = item._id || item.id;
-    return acc + item.price * cartItems[itemId];
-  }, 0);
+  const subtotal = cartList.reduce((acc, item) => acc + item.lineTotal, 0);
 
   const deliveryFee = subtotal > 0 ? 35 : 0;
   const grandTotal = subtotal + deliveryFee;
 
-  const removeItemCompletely = (id) => {
-    const currentQty = cartItems[id] || 0;
-    for (let i = 0; i < currentQty; i++) {
-      removeFromCart(id);
-    }
+  const removeItemCompletely = (cartKey) => {
+    clearCartItem(cartKey);
   };
 
   const navigate = useNavigate();
@@ -156,12 +147,12 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
             <div className="cart-items-list">
               <ul className="items-ul">
                 {cartList.map((item) => {
-                  const id = item._id || item.id;
-                  const qty = cartItems[id];
+                  const { cartKey } = item;
+                  const qty = item.quantity;
                   const itemImageUrl = url ? `${url}/images/${item.image}` : item.image;
 
                   return (
-                    <li key={id} className="cart-item">
+                    <li key={cartKey} className="cart-item">
                       <img
                         src={itemImageUrl}
                         alt={item.name}
@@ -171,7 +162,7 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
                         <div className="item-header">
                           <h3 className="item-name">{item.name}</h3>
                           <button
-                            onClick={() => removeItemCompletely(id)}
+                            onClick={() => removeItemCompletely(cartKey)}
                             className="remove-btn"
                             aria-label="Remove item"
                           >
@@ -193,12 +184,19 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
                         </div>
 
                         <p className="item-price">R{item.price.toFixed(2)} each</p>
+                        {(item.addOns.length > 0 || item.spiceLevel || item.notes) && (
+                          <p className="item-customization">
+                            {item.addOns.map((a) => a.name).join(', ')}
+                            {item.spiceLevel ? `${item.addOns.length > 0 ? ' · ' : ''}${item.spiceLevel}` : ''}
+                            {item.notes ? ` · Note: ${item.notes}` : ''}
+                          </p>
+                        )}
 
                         <div className="item-footer">
                           {/* Stepper matching design */}
                           <div className="cart-drawer-stepper">
                             <button
-                              onClick={() => removeFromCart(id)}
+                              onClick={() => removeFromCart(cartKey)}
                               className="stepper-btn"
                               aria-label="Decrease quantity"
                             >
@@ -206,7 +204,7 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
                             </button>
                             <span className="stepper-qty">{qty}</span>
                             <button
-                              onClick={() => addToCart(id)}
+                              onClick={() => addToCart(item.itemId, { addOns: item.addOns, spiceLevel: item.spiceLevel, notes: item.notes })}
                               className="stepper-btn"
                               aria-label="Increase quantity"
                             >
@@ -215,7 +213,7 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
                           </div>
 
                           <span className="item-total-price">
-                            R{(item.price * qty).toFixed(2)}
+                            R{item.lineTotal.toFixed(2)}
                           </span>
                         </div>
                       </div>

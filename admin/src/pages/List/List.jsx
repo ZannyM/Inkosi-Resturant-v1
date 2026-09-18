@@ -11,7 +11,8 @@ const FOOD_CATEGORIES = [
   "Cake",
   "Pure Veg",
   "Pasta",
-  "Noodles"
+  "Noodles",
+  "Drinks"
 ]
 
 const List = ({ url }) => {

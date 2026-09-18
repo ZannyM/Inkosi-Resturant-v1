@@ -4,7 +4,7 @@ import './Menu.css'
 import FoodItem from '../../components/FoodItem/FoodItem'
 import { StoreContext } from '../../context/StoreContext' // 1. Import StoreContext
 
-const TABS = ["All", "Salads", "Rolls", "Pasta", "Noodles", "Sandwiches", "Desserts"];
+const TABS = ["All", "Salads", "Rolls", "Pasta", "Noodles", "Sandwiches", "Desserts", "Drinks"];
 
 const normalizeCategory = (cat) => {
   if (!cat) return "All";
@@ -15,6 +15,7 @@ const normalizeCategory = (cat) => {
   if (raw === "salad" || raw === "salads") return "Salads";
   if (raw === "roll" || raw === "rolls") return "Rolls";
   if (raw === "noodle" || raw === "noodles") return "Noodles";
+  if (raw === "drink" || raw === "drinks" || raw === "beverage" || raw === "beverages") return "Drinks";
   
   return cat;
 };
