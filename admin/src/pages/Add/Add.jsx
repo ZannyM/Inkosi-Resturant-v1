@@ -18,11 +18,33 @@ const Add = ({ url }) => {
         category: "Salad",   //default category when i reload page
         isFeatured: false
     })
+    const [customization, setCustomization] = useState({
+        addOnsEnabled: false,
+        addOns: [{ name: "", price: "" }],
+        spiceLevelEnabled: false,
+        notesEnabled: true
+    })
 
     const onChangeHandler = (event) => {
         const name = event.target.name;
         const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
         setData(data => ({ ...data, [name]: value }))
+    }
+
+    const onAddOnChange = (index, field, value) => {
+        setCustomization((prev) => {
+            const addOns = [...prev.addOns];
+            addOns[index] = { ...addOns[index], [field]: value };
+            return { ...prev, addOns };
+        })
+    }
+
+    const addAddOnRow = () => {
+        setCustomization((prev) => ({ ...prev, addOns: [...prev.addOns, { name: "", price: "" }] }))
+    }
+
+    const removeAddOnRow = (index) => {
+        setCustomization((prev) => ({ ...prev, addOns: prev.addOns.filter((_, i) => i !== index) }))
     }
 
     const resetForm = () => {
@@ -32,6 +54,12 @@ const Add = ({ url }) => {
             price: "",
             category: "Salad",
             isFeatured: false
+        })
+        setCustomization({
+            addOnsEnabled: false,
+            addOns: [{ name: "", price: "" }],
+            spiceLevelEnabled: false,
+            notesEnabled: true
         })
         setImage(false)
         if (fileInputRef.current) {
@@ -48,6 +76,12 @@ const Add = ({ url }) => {
         formData.append("category", data.category)
         formData.append("isFeatured", data.isFeatured)
         formData.append("image", image)
+        formData.append("customization", JSON.stringify({
+            ...customization,
+            addOns: customization.addOns
+                .filter((a) => a.name.trim())
+                .map((a) => ({ name: a.name.trim(), price: Number(a.price) || 0 }))
+        }))
         //we will call the api
         try {
             const response = await axios.post(`${apiUrl}/api/food/add`, formData);
@@ -117,6 +151,62 @@ const Add = ({ url }) => {
                     />
                     Set as featured dish on home page
                 </label>
+
+                <div className="add-customization flex-col">
+                    <p>PDP customization options</p>
+
+                    <label className="add-featured-toggle">
+                        <input
+                            type="checkbox"
+                            checked={customization.addOnsEnabled}
+                            onChange={(e) => setCustomization((prev) => ({ ...prev, addOnsEnabled: e.target.checked }))}
+                        />
+                        Allow add-ons for this item
+                    </label>
+
+                    {customization.addOnsEnabled && (
+                        <div className="add-customization-addons">
+                            {customization.addOns.map((addOn, index) => (
+                                <div className="add-addon-row" key={index}>
+                                    <input
+                                        type="text"
+                                        placeholder="Add-on name (e.g. Extra Ice)"
+                                        value={addOn.name}
+                                        onChange={(e) => onAddOnChange(index, "name", e.target.value)}
+                                    />
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        placeholder="Price (R)"
+                                        value={addOn.price}
+                                        onChange={(e) => onAddOnChange(index, "price", e.target.value)}
+                                    />
+                                    <button type="button" onClick={() => removeAddOnRow(index)} className="remove-addon-btn">✕</button>
+                                </div>
+                            ))}
+                            <button type="button" onClick={addAddOnRow} className="add-addon-btn">+ Add another add-on</button>
+                        </div>
+                    )}
+
+                    <label className="add-featured-toggle">
+                        <input
+                            type="checkbox"
+                            checked={customization.spiceLevelEnabled}
+                            onChange={(e) => setCustomization((prev) => ({ ...prev, spiceLevelEnabled: e.target.checked }))}
+                        />
+                        Allow spice level selection
+                    </label>
+
+                    <label className="add-featured-toggle">
+                        <input
+                            type="checkbox"
+                            checked={customization.notesEnabled}
+                            onChange={(e) => setCustomization((prev) => ({ ...prev, notesEnabled: e.target.checked }))}
+                        />
+                        Allow allergy / special request notes
+                    </label>
+                </div>
+
                 <button className='add-btn' type='submit'>ADD</button>
 
 

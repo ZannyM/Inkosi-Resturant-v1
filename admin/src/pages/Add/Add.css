@@ -104,6 +104,63 @@
     height: 16px;
 }
 
+.add-customization {
+    gap: 12px;
+    background: #faf8f4;
+    border: 1px solid rgba(20, 18, 16, 0.08);
+    border-radius: 0.8rem;
+    padding: 1rem;
+}
+
+.add-customization > p {
+    font-weight: 600;
+    margin: 0;
+}
+
+.add-customization-addons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 4px;
+}
+
+.add-addon-row {
+    display: flex;
+    gap: 8px;
+}
+
+.add-addon-row input {
+    padding: 0.5rem 0.7rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(20, 18, 16, 0.15);
+}
+
+.add-addon-row input[type="text"] {
+    flex: 2;
+}
+
+.add-addon-row input[type="number"] {
+    flex: 1;
+}
+
+.remove-addon-btn {
+    background: none;
+    border: none;
+    color: #b23b3b;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.add-addon-btn {
+    background: none;
+    border: none;
+    color: var(--gold);
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.85rem;
+    width: fit-content;
+}
+
 @media (max-width: 900px) {
     .add {
         margin: 0.8rem;

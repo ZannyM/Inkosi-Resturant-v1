@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { StoreContext } from '../../context/StoreContext';
-import { ADD_ONS, SPICE_LEVELS } from '../../assets/foodOptions';
+import { SPICE_LEVELS } from '../../assets/foodOptions';
 import './FoodDetails.css';
 
 const FoodDetails = () => {
@@ -13,6 +13,11 @@ const FoodDetails = () => {
         () => (food_list || []).find((item) => (item._id || item.id) === id),
         [food_list, id]
     );
+
+    const customization = food?.customization || { addOnsEnabled: false, addOns: [], spiceLevelEnabled: false, notesEnabled: true };
+    const availableAddOns = customization.addOnsEnabled ? (customization.addOns || []) : [];
+    const showSpiceLevel = Boolean(customization.spiceLevelEnabled);
+    const showNotes = customization.notesEnabled !== false;
 
     const [selectedAddOns, setSelectedAddOns] = useState([]);
     const [spiceLevel, setSpiceLevel] = useState('Medium');
@@ -46,8 +51,8 @@ const FoodDetails = () => {
     const handleAddToCart = () => {
         addToCart(food._id || food.id, {
             addOns: selectedAddOns,
-            spiceLevel: spiceLevel !== 'Medium' ? spiceLevel : null,
-            notes: notes.trim(),
+            spiceLevel: showSpiceLevel && spiceLevel !== 'Medium' ? spiceLevel : null,
+            notes: showNotes ? notes.trim() : '',
             quantity
         });
         setJustAdded(true);
@@ -72,56 +77,62 @@ const FoodDetails = () => {
                     <div className="customize-section">
                         <h2 className="customize-heading">Make it yours</h2>
 
-                        <div className="customize-group">
-                            <p className="customize-label">Add-ons</p>
-                            <div className="addon-options">
-                                {ADD_ONS.map((addOn) => {
-                                    const checked = selectedAddOns.some((a) => a.name === addOn.name);
-                                    return (
-                                        <label key={addOn.name} className={`addon-option ${checked ? 'selected' : ''}`}>
-                                            <input
-                                                type="checkbox"
-                                                checked={checked}
-                                                onChange={() => toggleAddOn(addOn)}
-                                            />
-                                            <span>{addOn.name}</span>
-                                            {addOn.price > 0 && <span className="addon-price">+R{addOn.price}</span>}
-                                        </label>
-                                    );
-                                })}
+                        {availableAddOns.length > 0 && (
+                            <div className="customize-group">
+                                <p className="customize-label">Add-ons</p>
+                                <div className="addon-options">
+                                    {availableAddOns.map((addOn) => {
+                                        const checked = selectedAddOns.some((a) => a.name === addOn.name);
+                                        return (
+                                            <label key={addOn.name} className={`addon-option ${checked ? 'selected' : ''}`}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={checked}
+                                                    onChange={() => toggleAddOn(addOn)}
+                                                />
+                                                <span>{addOn.name}</span>
+                                                {addOn.price > 0 && <span className="addon-price">+R{addOn.price}</span>}
+                                            </label>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        <div className="customize-group">
-                            <p className="customize-label">Spice level</p>
-                            <div className="spice-options">
-                                {SPICE_LEVELS.map((level) => (
-                                    <button
-                                        type="button"
-                                        key={level}
-                                        className={`spice-chip ${spiceLevel === level ? 'active' : ''}`}
-                                        onClick={() => setSpiceLevel(level)}
-                                    >
-                                        {level}
-                                    </button>
-                                ))}
+                        {showSpiceLevel && (
+                            <div className="customize-group">
+                                <p className="customize-label">Spice level</p>
+                                <div className="spice-options">
+                                    {SPICE_LEVELS.map((level) => (
+                                        <button
+                                            type="button"
+                                            key={level}
+                                            className={`spice-chip ${spiceLevel === level ? 'active' : ''}`}
+                                            onClick={() => setSpiceLevel(level)}
+                                        >
+                                            {level}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        <div className="customize-group">
-                            <label className="customize-label" htmlFor="food-notes">
-                                Allergies or special requests
-                            </label>
-                            <textarea
-                                id="food-notes"
-                                className="notes-input"
-                                rows={3}
-                                placeholder="e.g. nut allergy, no dairy, light on salt..."
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                                maxLength={200}
-                            />
-                        </div>
+                        {showNotes && (
+                            <div className="customize-group">
+                                <label className="customize-label" htmlFor="food-notes">
+                                    Allergies or special requests
+                                </label>
+                                <textarea
+                                    id="food-notes"
+                                    className="notes-input"
+                                    rows={3}
+                                    placeholder="e.g. nut allergy, no dairy, light on salt..."
+                                    value={notes}
+                                    onChange={(e) => setNotes(e.target.value)}
+                                    maxLength={200}
+                                />
+                            </div>
+                        )}
 
                         <div className="customize-group quantity-row">
                             <p className="customize-label">Quantity</p>

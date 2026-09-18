@@ -28,6 +28,12 @@ const List = ({ url }) => {
     price: "",
     isFeatured: false
   });
+  const [editCustomization, setEditCustomization] = useState({
+    addOnsEnabled: false,
+    addOns: [{ name: "", price: "" }],
+    spiceLevelEnabled: false,
+    notesEnabled: true
+  });
 
   const apiUrl = url;
 
@@ -64,6 +70,12 @@ const List = ({ url }) => {
       price: item.price,
       isFeatured: item.isFeatured
     })
+    setEditCustomization({
+      addOnsEnabled: item.customization?.addOnsEnabled || false,
+      addOns: item.customization?.addOns?.length ? item.customization.addOns.map((a) => ({ name: a.name, price: a.price })) : [{ name: "", price: "" }],
+      spiceLevelEnabled: item.customization?.spiceLevelEnabled || false,
+      notesEnabled: item.customization?.notesEnabled !== false
+    })
   }
 
   const cancelEdit = () => {
@@ -77,6 +89,28 @@ const List = ({ url }) => {
       price: "",
       isFeatured: false
     })
+    setEditCustomization({
+      addOnsEnabled: false,
+      addOns: [{ name: "", price: "" }],
+      spiceLevelEnabled: false,
+      notesEnabled: true
+    })
+  }
+
+  const onEditAddOnChange = (index, field, value) => {
+    setEditCustomization((prev) => {
+      const addOns = [...prev.addOns];
+      addOns[index] = { ...addOns[index], [field]: value };
+      return { ...prev, addOns };
+    })
+  }
+
+  const addEditAddOnRow = () => {
+    setEditCustomization((prev) => ({ ...prev, addOns: [...prev.addOns, { name: "", price: "" }] }))
+  }
+
+  const removeEditAddOnRow = (index) => {
+    setEditCustomization((prev) => ({ ...prev, addOns: prev.addOns.filter((_, i) => i !== index) }))
   }
 
   const onEditChange = (event) => {
@@ -101,7 +135,13 @@ const List = ({ url }) => {
         description: editData.description,
         category: editData.category,
         price: Number(editData.price),
-        isFeatured: editData.isFeatured
+        isFeatured: editData.isFeatured,
+        customization: {
+          ...editCustomization,
+          addOns: editCustomization.addOns
+            .filter((a) => a.name.trim())
+            .map((a) => ({ name: a.name.trim(), price: Number(a.price) || 0 }))
+        }
       })
 
       if (response.data.success) {
@@ -213,6 +253,62 @@ const List = ({ url }) => {
                     />
                   </label>
                 </div>
+
+                <div className='list-item-editor-customization'>
+                  <h5>PDP customization options</h5>
+
+                  <label className='list-item-editor-featured'>
+                    <input
+                      type='checkbox'
+                      checked={editCustomization.addOnsEnabled}
+                      onChange={(e) => setEditCustomization((prev) => ({ ...prev, addOnsEnabled: e.target.checked }))}
+                    />
+                    <span>Allow add-ons for this item</span>
+                  </label>
+
+                  {editCustomization.addOnsEnabled && (
+                    <div className='list-editor-addons'>
+                      {editCustomization.addOns.map((addOn, index) => (
+                        <div className='list-editor-addon-row' key={index}>
+                          <input
+                            type='text'
+                            placeholder='Add-on name (e.g. No Ice)'
+                            value={addOn.name}
+                            onChange={(e) => onEditAddOnChange(index, "name", e.target.value)}
+                          />
+                          <input
+                            type='number'
+                            min='0'
+                            placeholder='Price (R)'
+                            value={addOn.price}
+                            onChange={(e) => onEditAddOnChange(index, "price", e.target.value)}
+                          />
+                          <button type='button' onClick={() => removeEditAddOnRow(index)} className='remove-addon-btn'>✕</button>
+                        </div>
+                      ))}
+                      <button type='button' onClick={addEditAddOnRow} className='add-addon-btn'>+ Add another add-on</button>
+                    </div>
+                  )}
+
+                  <label className='list-item-editor-featured'>
+                    <input
+                      type='checkbox'
+                      checked={editCustomization.spiceLevelEnabled}
+                      onChange={(e) => setEditCustomization((prev) => ({ ...prev, spiceLevelEnabled: e.target.checked }))}
+                    />
+                    <span>Allow spice level selection</span>
+                  </label>
+
+                  <label className='list-item-editor-featured'>
+                    <input
+                      type='checkbox'
+                      checked={editCustomization.notesEnabled}
+                      onChange={(e) => setEditCustomization((prev) => ({ ...prev, notesEnabled: e.target.checked }))}
+                    />
+                    <span>Allow allergy / special request notes</span>
+                  </label>
+                </div>
+
                 <div className='list-item-editor-actions'>
                   <button type='button' className='list-editor-btn' onClick={cancelEdit}>Cancel</button>
                   <button type='button' className='list-editor-btn primary' disabled={isUpdating} onClick={saveEdit}>

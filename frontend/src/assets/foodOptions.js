@@ -1,11 +1,3 @@
-// Shared customization options offered on the Product Display Page
-export const ADD_ONS = [
-    { name: "Extra Cheese", price: 15 },
-    { name: "Extra Sauce", price: 10 },
-    { name: "Extra Avo", price: 12 },
-    { name: "Grilled Chicken Topping", price: 25 },
-    { name: "No Onions", price: 0 },
-    { name: "No Dairy", price: 0 }
-];
-
+// Fixed spice levels offered when a food item enables spice level selection.
+// Per-item add-ons are configured in the admin panel and come from food.customization.addOns.
 export const SPICE_LEVELS = ["Mild", "Medium", "Hot"];

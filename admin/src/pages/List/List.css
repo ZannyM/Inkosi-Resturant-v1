@@ -72,6 +72,55 @@
 .list-item-editor-featured span {
   margin: 0;
 }
+.list-item-editor-customization {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  background: #faf8f4;
+  border: 1px solid rgba(20, 18, 16, 0.08);
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.list-item-editor-customization h5 {
+  margin: 0;
+}
+.list-editor-addons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 4px;
+}
+.list-editor-addon-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.list-editor-addon-row input {
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(20, 18, 16, 0.15);
+}
+.list-editor-addon-row input[type="text"] {
+  flex: 2;
+}
+.list-editor-addon-row input[type="number"] {
+  flex: 1;
+}
+.remove-addon-btn {
+  background: none;
+  border: none;
+  color: #b23b3b;
+  cursor: pointer;
+}
+.add-addon-btn {
+  background: none;
+  border: none;
+  color: var(--gold, #a97a3f);
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.85rem;
+  width: fit-content;
+}
 .list-item-editor-actions {
   margin-top: 0.8rem;
   display: flex;

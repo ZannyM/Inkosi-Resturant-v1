@@ -3,6 +3,27 @@ import fs from 'fs'
 
 const MAX_FEATURED_DISHES = 4;
 
+//multipart form fields arrive as strings, so customization is sent as a JSON string
+const parseCustomization = (raw) => {
+    const fallback = { addOnsEnabled: false, addOns: [], spiceLevelEnabled: false, notesEnabled: true };
+    if (!raw) return fallback;
+    try {
+        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+        return {
+            addOnsEnabled: Boolean(parsed.addOnsEnabled),
+            addOns: Array.isArray(parsed.addOns)
+                ? parsed.addOns
+                    .filter((a) => a && a.name && a.name.trim())
+                    .map((a) => ({ name: a.name.trim(), price: Number(a.price) || 0 }))
+                : [],
+            spiceLevelEnabled: Boolean(parsed.spiceLevelEnabled),
+            notesEnabled: parsed.notesEnabled !== false
+        };
+    } catch (error) {
+        return fallback;
+    }
+};
+
 //ADD FOOD ITEM
 
 const addfood =  async (req,res) => {
@@ -16,7 +37,8 @@ const addfood =  async (req,res) => {
         category:req.body.category,
         image:image_filename,
         isFeatured: req.body.isFeatured === "true",
-        featuredUpdatedAt: req.body.isFeatured === "true" ? new Date() : null
+        featuredUpdatedAt: req.body.isFeatured === "true" ? new Date() : null,
+        customization: parseCustomization(req.body.customization)
     })
     try{
         //the food item will be saved in the database
@@ -110,7 +132,7 @@ const removeFood = async (req,res) =>{
 
 const updateFood = async (req, res) => {
     try {
-        const { id, name, description, price, category, isFeatured } = req.body;
+        const { id, name, description, price, category, isFeatured, customization } = req.body;
 
         if (!id) {
             return res.json({ success: false, message: "Food item id is required" });
@@ -139,6 +161,10 @@ const updateFood = async (req, res) => {
                 return res.json({ success: false, message: "Price must be a valid number" });
             }
             food.price = parsedPrice;
+        }
+
+        if (customization !== undefined) {
+            food.customization = parseCustomization(customization);
         }
 
         if (typeof isFeatured === "boolean") {
