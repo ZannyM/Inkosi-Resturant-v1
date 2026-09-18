@@ -89,6 +89,8 @@ const Add = ({ url }) => {
                 resetForm();
                 toast.success(response.data.message)
                 // toast.success(response.data.message)
+            } else {
+                toast.error(response?.data?.message || "Something went wrong while adding the dish")
             }
         } catch (error) {
             console.error(error)
