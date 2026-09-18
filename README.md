@@ -3,7 +3,9 @@
 Full-stack restaurant ordering platform with three apps:
 
 - Frontend customer app (React + Vite)
+- https://inkosiresturant.netlify.app/ 
 - Admin dashboard (React + Vite)
+- https://inkosi-admin.netlify.app/
 - Backend API (Node.js + Express + MongoDB)
 
 Status: active development
