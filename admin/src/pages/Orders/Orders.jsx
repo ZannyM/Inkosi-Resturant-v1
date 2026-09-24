@@ -107,11 +107,16 @@ const Orders = ({ url }) => {
         {visibleOrders.length === 0 && (
           <p className="order-empty">No orders found for this filter.</p>
         )}
-        {visibleOrders.map((order, index) => (
+        {visibleOrders.map((order, index) => {
+          const reference = order.paystackReference || "N/A";
+          const shortReference = reference.length > 12
+            ? `${reference.slice(0, 4)}...${reference.slice(-4)}`
+            : reference;
+          return (
           <div key={index} className="order-item">
             <img src={assets.parcel_icon} alt="" />
             <div>
-              <p className="order-item-reference">Ref: {order.paystackReference || "N/A"}</p>
+              <p className="order-item-reference" title={reference}>Ref: {shortReference}</p>
               <p className='order-item-food'>
                 {order.items.map((item, index) => {
                   const customization = [
@@ -142,7 +147,8 @@ const Orders = ({ url }) => {
             </select>
 
           </div>
-        ))}
+          );
+        })}
       </div>
 
     </div>
