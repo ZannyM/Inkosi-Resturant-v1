@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { StoreContext } from '../../context/StoreContext';
 import { SPICE_LEVELS } from '../../assets/foodOptions';
 import './FoodDetails.css';
@@ -28,6 +29,7 @@ const FoodDetails = () => {
     if (!food) {
         return (
             <div className="food-details-page food-details-empty">
+                <Helmet><title>Dish Details | Inkosi Restaurant</title></Helmet>
                 <p>We couldn't find that dish.</p>
                 <button className="btn-back-menu" onClick={() => navigate('/menu')}>
                     Back to menu
@@ -61,6 +63,7 @@ const FoodDetails = () => {
 
     return (
         <div className="food-details-page">
+            <Helmet><title>{`${food.name} | Inkosi Restaurant`}</title></Helmet>
             <button className="btn-back-menu" onClick={() => navigate(-1)}>&larr; Back</button>
 
             <div className="food-details-grid">

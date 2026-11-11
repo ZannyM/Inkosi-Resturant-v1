@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import './Confirmation.css';
 import { StoreContext } from '../../context/StoreContext';
 import axios from 'axios';
@@ -36,6 +37,7 @@ const Confirmation = () => {
 
   return (
     <div className="confirmation-page">
+      <Helmet><title>{`${shortOrderId ? `Order ${shortOrderId}` : 'Order Confirmation'} | Inkosi Restaurant`}</title></Helmet>
       <section className="confirmation-card">
         {/* Success Icon */}
         <div className="success-badge">

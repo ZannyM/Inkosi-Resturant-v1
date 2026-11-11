@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import CartDrawer from './components/CartDrawer/CartDrawer';
@@ -14,6 +15,13 @@ import Menu from './pages/Menu/Menu';
 import CheckOut from './pages/CheckOut/CheckOut';
 import Confirmation from './pages/Confirmation/Confirmation';
 import FoodDetails from './pages/FoodDetails/FoodDetails';
+
+const Page = ({ title, children }) => (
+  <>
+    <Helmet><title>{`${title} | Inkosi Restaurant`}</title></Helmet>
+    {children}
+  </>
+);
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -70,14 +78,14 @@ const App = () => {
 
         <div className="app">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/menu" element={<Menu />} />
+            <Route path="/" element={<Page title="Home"><Home /></Page>} />
+            <Route path="/menu" element={<Page title="Menu"><Menu /></Page>} />
             <Route path="/food/:id" element={<FoodDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<CheckOut />} />
-            <Route path="/verify" element={<Verify />} />
+            <Route path="/cart" element={<Page title="Your Cart"><Cart /></Page>} />
+            <Route path="/checkout" element={<Page title="Checkout"><CheckOut /></Page>} />
+            <Route path="/verify" element={<Page title="Payment Verification"><Verify /></Page>} />
             <Route path="/confirmation" element={<Confirmation />} />
-            <Route path="/myorders" element={<MyOrders />} />
+            <Route path="/myorders" element={<Page title="My Orders"><MyOrders /></Page>} />
           </Routes>
         </div>
 
