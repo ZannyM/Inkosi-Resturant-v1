@@ -98,6 +98,18 @@
   border-bottom-color: var(--gold, #d4af37);
 }
 
+.field-input[aria-invalid="true"] {
+  border-bottom-color: #b7462b;
+}
+
+.field-error {
+  display: block;
+  margin-top: 0.4rem;
+  color: #8a2f1b;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
 /* Paystack Banner */
 .paystack-banner {
   border-radius: 1rem;

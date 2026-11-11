@@ -5,6 +5,7 @@ import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
 import './CheckOut.css';
 import RestaurantClosedPopup from '../../components/RestaurantClosedPopup/RestaurantClosedPopup';
+import { citiesForProvince, provinces, validateCheckout } from './checkoutValidation';
 
 const CheckOut = () => {
   const { getTotalCartAmount, token, getCartDetails, url, isInitialized } = useContext(StoreContext);
@@ -16,6 +17,7 @@ const CheckOut = () => {
   const [showClosedPopup, setShowClosedPopup] = useState(false);
   const [closedMessage, setClosedMessage] = useState('');
   const [operatingHours, setOperatingHours] = useState('10:00 AM - 10:00 PM (All week)');
+  const [touched, setTouched] = useState({});
 
   // Form State containing all original delivery fields
   const [data, setData] = useState({
@@ -26,14 +28,26 @@ const CheckOut = () => {
     city: "",
     province: "",
     zipcode: "",
-    country: "",
+    country: "South Africa",
     phone: ""
   });
 
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
-    setData((prev) => ({ ...prev, [name]: value }));
+    const nextValue = name === 'phone' || name === 'zipcode' ? value.replace(/\D/g, '') : value;
+    setData((prev) => ({ ...prev, [name]: nextValue, ...(name === 'province' ? { city: '' } : {}) }));
+    if (name === 'country') setTouched((prev) => ({ ...prev, country: true }));
   };
+
+  const onBlurHandler = (event) => {
+    setTouched((prev) => ({ ...prev, [event.target.name]: true }));
+  };
+
+  const errors = validateCheckout(data);
+  const fieldError = (name) => touched[name] ? errors[name] : undefined;
+  const fieldProps = (name) => ({
+    name, value: data[name], onChange: onChangeHandler, onBlur: onBlurHandler, error: fieldError(name)
+  });
 
   // Calculate cart items list dynamically
   const orderItemsList = getCartDetails();
@@ -44,8 +58,7 @@ const CheckOut = () => {
 
   // Validation
   const isCartEmpty = orderItemsList.length === 0;
-  const isFormIncomplete = Object.values(data).some((val) => !val.trim());
-  const disabled = isCartEmpty || isFormIncomplete || submitting;
+  const disabled = isCartEmpty || submitting;
 
   const openClosedPopup = (message, hours) => {
     setClosedMessage(message || 'Restaurant is currently closed.');
@@ -120,12 +133,17 @@ const CheckOut = () => {
     event.preventDefault();
     if (disabled) return;
 
-    const allowedToOrder = await canPlaceOrderNow();
-    if (!allowedToOrder) {
+    if (Object.keys(errors).length > 0) {
+      setTouched(Object.fromEntries(Object.keys(data).map((field) => [field, true])));
       return;
     }
 
     setSubmitting(true);
+    const allowedToOrder = await canPlaceOrderNow();
+    if (!allowedToOrder) {
+      setSubmitting(false);
+      return;
+    }
 
     const formattedItems = orderItemsList.map((item) => ({
       _id: item._id,
@@ -139,7 +157,7 @@ const CheckOut = () => {
     }));
 
     const orderData = {
-      address: data,
+      address: { ...Object.fromEntries(Object.entries(data).map(([field, value]) => [field, value.trim()])), country: 'South Africa' },
       items: formattedItems,
       amount: grandTotal
     };
@@ -212,66 +230,66 @@ const CheckOut = () => {
 
       <div className="checkout-grid">
         {/* Delivery & Payment Form */}
-        <form onSubmit={placeOrder} className="checkout-form">
+        <form onSubmit={placeOrder} className="checkout-form" noValidate>
           <Fieldset title="Delivery details">
             <div className="fields-grid">
               <Field
                 label="First name"
-                name="firstName"
-                value={data.firstName}
-                onChange={onChangeHandler}
+                {...fieldProps('firstName')}
+                autoComplete="given-name"
               />
               <Field
                 label="Last name"
-                name="lastName"
-                value={data.lastName}
-                onChange={onChangeHandler}
+                {...fieldProps('lastName')}
+                autoComplete="family-name"
               />
               <Field
                 label="Email"
                 type="email"
-                name="email"
-                value={data.email}
-                onChange={onChangeHandler}
+                {...fieldProps('email')}
+                autoComplete="email"
               />
               <Field
                 label="Phone"
                 type="tel"
-                name="phone"
-                value={data.phone}
-                onChange={onChangeHandler}
+                {...fieldProps('phone')}
+                autoComplete="tel-national"
+                inputMode="numeric"
+                maxLength={11}
               />
               <div className="full-width">
                 <Field
                   label="Street Address"
-                  name="street"
-                  value={data.street}
-                  onChange={onChangeHandler}
+                  {...fieldProps('street')}
+                  autoComplete="street-address"
                 />
               </div>
-              <Field
-                label="City"
-                name="city"
-                value={data.city}
-                onChange={onChangeHandler}
-              />
-              <Field
+              <SelectField
                 label="Province"
-                name="province"
-                value={data.province}
-                onChange={onChangeHandler}
+                {...fieldProps('province')}
+                options={provinces.map((province) => province.name)}
+                placeholder="Select a province"
+                autoComplete="address-level1"
+              />
+              <SelectField
+                label="City"
+                {...fieldProps('city')}
+                options={citiesForProvince(data.province)}
+                placeholder={data.province ? 'Select a city' : 'Select a province first'}
+                disabled={!data.province}
+                autoComplete="address-level2"
               />
               <Field
-                label="Zip code"
-                name="zipcode"
-                value={data.zipcode}
-                onChange={onChangeHandler}
+                label="Postal code"
+                {...fieldProps('zipcode')}
+                inputMode="numeric"
+                maxLength={4}
+                autoComplete="postal-code"
               />
               <Field
                 label="Country"
-                name="country"
-                value={data.country}
-                onChange={onChangeHandler}
+                {...fieldProps('country')}
+                autoComplete="country-name"
               />
             </div>
           </Fieldset>
@@ -375,18 +393,40 @@ function Fieldset({ title, children }) {
   );
 }
 
-function Field({ label, name, value, onChange, type = "text" }) {
+function Field({ label, name, error, type = "text", ...props }) {
   return (
     <label className="field-label">
       <span className="field-caption">{label}</span>
       <input
         type={type}
         name={name}
-        value={value}
-        onChange={onChange}
+        {...props}
         required
         className="field-input"
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${name}-error` : undefined}
       />
+      {error && <span id={`${name}-error`} className="field-error">{error}</span>}
+    </label>
+  );
+}
+
+function SelectField({ label, name, error, options, placeholder, ...props }) {
+  return (
+    <label className="field-label">
+      <span className="field-caption">{label}</span>
+      <select
+        name={name}
+        {...props}
+        required
+        className="field-input"
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${name}-error` : undefined}
+      >
+        {placeholder && <option value="">{placeholder}</option>}
+        {options.map((option) => <option key={option} value={option}>{option}</option>)}
+      </select>
+      {error && <span id={`${name}-error`} className="field-error">{error}</span>}
     </label>
   );
 }

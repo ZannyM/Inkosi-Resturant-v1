@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Navbar from './components/Navbar/Navbar';
@@ -12,7 +12,7 @@ import Cart from './pages/Cart/Cart';
 import Verify from './pages/Verify/Verify';
 import MyOrders from './pages/MyOrders/MyOrders';
 import Menu from './pages/Menu/Menu';
-import CheckOut from './pages/CheckOut/CheckOut';
+const CheckOut = lazy(() => import('./pages/CheckOut/CheckOut'));
 import Confirmation from './pages/Confirmation/Confirmation';
 import FoodDetails from './pages/FoodDetails/FoodDetails';
 
@@ -82,7 +82,7 @@ const App = () => {
             <Route path="/menu" element={<Page title="Menu"><Menu /></Page>} />
             <Route path="/food/:id" element={<FoodDetails />} />
             <Route path="/cart" element={<Page title="Your Cart"><Cart /></Page>} />
-            <Route path="/checkout" element={<Page title="Checkout"><CheckOut /></Page>} />
+            <Route path="/checkout" element={<Page title="Checkout"><Suspense fallback={<div className="checkout-loading">Loading checkout...</div>}><CheckOut /></Suspense></Page>} />
             <Route path="/verify" element={<Page title="Payment Verification"><Verify /></Page>} />
             <Route path="/confirmation" element={<Confirmation />} />
             <Route path="/myorders" element={<Page title="My Orders"><MyOrders /></Page>} />
