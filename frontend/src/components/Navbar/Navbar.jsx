@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { StoreContext } from '../../context/StoreContext';
@@ -15,7 +15,7 @@ const Navbar = ({ setShowLogin, setDrawerOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { getTotalCartCount, token, setToken, user } = useContext(StoreContext);
+  const { getTotalCartCount, token, logout, user } = useContext(StoreContext);
   const cartCount = getTotalCartCount ? getTotalCartCount() : 0;
 
   const currentPath = location.pathname;
@@ -30,8 +30,7 @@ const Navbar = ({ setShowLogin, setDrawerOpen }) => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken('');
+    logout();
     navigate('/');
   };
 

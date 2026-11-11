@@ -1,96 +1,49 @@
-import { response } from "express";
 import userModel from "../models/userModel.js";
+import { CartError } from "../utils/cartOperations.js";
+import { mutateCart } from "../utils/cartMutation.js";
 
-//old cart entries were plain numbers (itemId -> qty); normalize to the object shape
-const normalizeEntry = (key, entry) => {
-    if (typeof entry === "number") {
-        return { itemId: key, quantity: entry, addOns: [], spiceLevel: null, notes: "" };
-    }
-    return entry;
+const store = {
+    read: (userId) => userModel.findById(userId).select("cartData savedData cartRevision cartMergeIds cartMergeDigests").lean(),
+    compareAndSwap: (userId, revision, state) => userModel.findOneAndUpdate(
+        { _id: userId, cartRevision: revision === undefined ? { $exists: false } : revision },
+        { $set: { cartData: state.cartData, savedData: state.savedData, cartMergeIds: state.mergeIds, cartMergeDigests: state.mergeDigests }, $inc: { cartRevision: 1 } },
+        { returnDocument: "after" }
+    ).lean()
 };
 
-//add to user cart, supports optional customization (add-ons, spice level, notes)
-const addToCart = async (req, res) => {
+const respondError = (res, error) => {
+    if (error instanceof CartError) return res.status(error.status).json({ success: false, message: error.message });
+    console.log(error);
+    return res.status(500).json({ success: false, message: "Error" });
+};
+
+const handler = (makeOperation, message) => async (req, res) => {
     try {
-        const { itemId, cartKey, quantity = 1, addOns = [], spiceLevel = null, notes = "", unitPrice } = req.body;
-        const key = cartKey || itemId;
-
-        let userData = await userModel.findById(req.body.userId);
-        let cartData = userData.cartData || {};
-
-        const existing = normalizeEntry(key, cartData[key]);
-        cartData[key] = {
-            itemId,
-            quantity: (existing?.quantity || 0) + quantity,
-            addOns,
-            spiceLevel,
-            notes,
-            unitPrice
-        };
-
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData });
-        res.json({ success: true, message: "Added To Cart" });
-
+        const state = await mutateCart(store, req.body.userId, makeOperation(req.body));
+        res.json({ success: true, ...(message ? { message } : {}), cartData: state.cartData, savedData: state.savedData });
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: "Error" });
+        respondError(res, error);
     }
-}
+};
 
-//remove one unit from a cart line, identified by cartKey (falls back to itemId for simple items)
-const removeFromCart = async (req, res) => {
-    try {
-        const { cartKey, itemId } = req.body;
-        const key = cartKey || itemId;
+const addToCart = handler(({ itemId, cartKey, quantity = 1, addOns = [], spiceLevel = null, notes = "", unitPrice }) => ({
+    type: "add", key: cartKey || itemId,
+    entry: { itemId, quantity, addOns, spiceLevel, notes, ...(unitPrice === undefined ? {} : { unitPrice }) }
+}), "Added To Cart");
+const removeFromCart = handler(({ cartKey, itemId }) => ({ type: "remove", key: cartKey || itemId }), "Removed From Cart");
+const clearCartItem = handler(({ cartKey }) => ({ type: "clear", key: cartKey }), "Removed From Cart");
+const mergeCart = handler(({ mergeId, cartData, savedData }) => ({ type: "merge", mergeId, cartData, savedData }));
+const moveCartItem = handler(({ cartKey, to }) => ({ type: "move", key: cartKey, to }));
+const removeSavedItem = handler(({ cartKey }) => ({ type: "savedRemove", key: cartKey }));
 
-        let userData = await userModel.findById(req.body.userId);
-        let cartData = userData.cartData || {};
-        const existing = normalizeEntry(key, cartData[key]);
-
-        if (existing && existing.quantity > 0) {
-            existing.quantity -= 1;
-            if (existing.quantity <= 0) {
-                delete cartData[key];
-            } else {
-                cartData[key] = existing;
-            }
-        }
-
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData });
-        res.json({ success: true, message: "Removed From Cart" });
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: "Error" });
-
-    }
-
-}
-
-//remove a cart line entirely, regardless of quantity
-const clearCartItem = async (req, res) => {
-    try {
-        const { cartKey } = req.body;
-        let userData = await userModel.findById(req.body.userId);
-        let cartData = userData.cartData || {};
-        delete cartData[cartKey];
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData });
-        res.json({ success: true, message: "Removed From Cart" });
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: "Error" });
-    }
-}
-
-//fetch user cart data
 const getCart = async (req, res) => {
     try {
-        let userData = await userModel.findById(req.body.userId);
-        let cartData = userData.cartData || {};
-        res.json({ success: true, cartData })
+        const user = await store.read(req.body.userId);
+        if (!user) throw new CartError("User not found", 404);
+        res.json({ success: true, cartData: user.cartData || {}, savedData: user.savedData || {} });
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: "Error" });
+        respondError(res, error);
     }
-}
+};
 
-export { addToCart, removeFromCart, clearCartItem, getCart }
+export { addToCart, removeFromCart, clearCartItem, getCart, mergeCart, moveCartItem, removeSavedItem };

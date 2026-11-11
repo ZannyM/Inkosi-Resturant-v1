@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import axios from 'axios';
@@ -6,7 +6,7 @@ import { StoreContext } from '../../context/StoreContext';
 import './LoginPopup.css';
 
 const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' }) => {
-  const { url, setToken } = useContext(StoreContext);
+  const { url, login, getSessionVersion } = useContext(StoreContext);
   const navigate = useNavigate();
 
   // 'login' or 'signup'
@@ -29,6 +29,7 @@ const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' 
   const onAuthSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    const sessionVersion = getSessionVersion();
 
     let endpoint = url;
     if (mode === 'login') {
@@ -41,8 +42,12 @@ const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' 
       const response = await axios.post(endpoint, data);
 
       if (response?.data?.success) {
-        setToken(response.data.token);
-        localStorage.setItem('token', response.data.token);
+        try {
+          await login(response.data.token, response.data.user?.id, sessionVersion);
+        } catch (error) {
+          if (mode === 'signup') setMode('login');
+          throw error;
+        }
         setShowLogin(false); // Close modal on success
         if (redirectAfterLogin) {
           navigate(redirectAfterLogin);
@@ -52,7 +57,7 @@ const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' 
       }
     } catch (error) {
       console.error('Auth request failed', error);
-      const message = error?.response?.data?.message || 'An error occurred during authentication.';
+      const message = error?.response?.data?.message || error?.message || 'An error occurred during authentication.';
       alert(message);
     } finally {
       setLoading(false);
@@ -66,6 +71,7 @@ const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' 
         <button
           type="button"
           onClick={() => setShowLogin(false)}
+          disabled={loading}
           className="login-popup-close-btn"
           aria-label="Close"
         >
