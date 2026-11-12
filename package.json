@@ -1,0 +1,32 @@
+{
+  "name": "inkosi-restaurant",
+  "version": "1.0.0",
+  "description": "Full-stack restaurant ordering system",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend && npm install --prefix admin",
+    "dev:all": "concurrently \"npm run server --prefix backend\" \"npm run dev --prefix frontend\" \"npm run dev --prefix admin\"",
+    "build:all": "npm run build --prefix backend && npm run build --prefix frontend && npm run build --prefix admin",
+    "test:all": "npm test --prefix backend",
+    "test:backend": "npm test --prefix backend",
+    "dev:backend": "npm run server --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:admin": "npm run dev --prefix admin",
+    "build:backend": "echo 'Backend does not have a build step'",
+    "build:frontend": "npm run build --prefix frontend",
+    "build:admin": "npm run build --prefix admin"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "restaurant",
+    "ordering",
+    "react",
+    "node",
+    "express",
+    "mongodb"
+  ],
+  "author": "ZannyM",
+  "license": "ISC"
+}
