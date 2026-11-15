@@ -1,11 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import "./Navbar.css"
-import axios from 'axios'
+import axios from '../../auth/api'
+import useAuth from '../../auth/useAuth'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
+const customerUrl = import.meta.env.VITE_CUSTOMER_URL ||
+  (import.meta.env.DEV ? 'http://localhost:5173' : 'https://inkosiresturant.netlify.app')
+
 const Navbar = ({ url }) => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isStoreLive, setIsStoreLive] = useState(true);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -108,12 +113,11 @@ const Navbar = ({ url }) => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('adminToken');
+    logout();
     localStorage.removeItem('adminManagerName');
     toast.success('Logged out');
     setProfileOpen(false);
-    navigate('/');
+    navigate('/login', { replace: true });
   }
 
   const managerLabel = useMemo(() => {
@@ -251,7 +255,7 @@ const Navbar = ({ url }) => {
               <button type="button" onClick={() => { setProfileOpen(false); toast.info('Staff management page will be added next.'); }}>
                 Staff Management
               </button>
-              <button type="button" onClick={() => { setProfileOpen(false); window.open('http://localhost:5174', '_blank', 'noopener,noreferrer'); }}>
+              <button type="button" onClick={() => { setProfileOpen(false); window.open(customerUrl, '_blank', 'noopener,noreferrer'); }}>
                 View Client Store
               </button>
               <button type="button" onClick={handleLogout}>Log Out</button>

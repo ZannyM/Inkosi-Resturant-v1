@@ -8,13 +8,24 @@ import userRouter from "./routes/userRoute.js"
 import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"
 import storeRouter from "./routes/storeRoute.js"
+import authRouter from "./routes/authRoute.js"
 
+if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET must be configured");
+}
 
 console.log("Paystack key loaded:", process.env.PAYSTACK_SECRET_KEY ? "YES" : "NO");
 console.log("Mongo URI loaded:", process.env.MONGO_URI ? "YES" : "NO");
 //app config
 const app = express()
 const port = process.env.PORT || 4000
+if (process.env.TRUST_PROXY_HOPS !== undefined) {
+    if (!/^[1-9]\d*$/.test(process.env.TRUST_PROXY_HOPS) ||
+        !Number.isSafeInteger(Number(process.env.TRUST_PROXY_HOPS))) {
+        throw new Error("TRUST_PROXY_HOPS must be a positive integer");
+    }
+    app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS));
+}
 
 // Ensure the uploads folder exists before multer tries to write to it
 if (!fs.existsSync("uploads")) {
@@ -33,6 +44,7 @@ app.use("/api/food",foodRouter)
 //we can access files in the uploads folder by using http://localhost:4000/images/1782888736566food_20-CTe0fZJ7.png
 app.use("/images",express.static('uploads'))
 app.use("/api/user",userRouter)
+app.use("/api/auth",authRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/order",orderRouter)
 app.use("/api/store",storeRouter)

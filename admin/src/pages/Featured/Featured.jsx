@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
+import axios from '../../auth/api';
 import { toast } from 'react-toastify';
 import './Featured.css';
 
