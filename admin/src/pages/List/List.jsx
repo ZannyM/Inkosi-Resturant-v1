@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "./List.css"
-import axios from 'axios'
+import axios from '../../auth/api'
 import { toast } from 'react-toastify'
 
 const FOOD_CATEGORIES = [

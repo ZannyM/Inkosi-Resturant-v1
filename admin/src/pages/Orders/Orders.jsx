@@ -3,7 +3,7 @@ import "./Orders.css"
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { useEffect } from 'react'
-import axios from 'axios'
+import axios from '../../auth/api'
 import { assets } from '../../assets/assets'
 import { useLocation } from 'react-router-dom'
 

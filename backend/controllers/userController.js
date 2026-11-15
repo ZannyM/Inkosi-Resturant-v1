@@ -2,21 +2,21 @@ import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import validator from "validator"
+import { DUMMY_PASSWORD_HASH } from "../utils/password.js";
 
 //login user
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
     //the password is hashed using bcrypt
     try {
-        const user = await userModel.findOne({ email });
-
-        if (!user) {
-            return res.json({ success: false, message: "User Does not exist" })
+        if (typeof email !== "string" || typeof password !== "string") {
+            return res.json({ success: false, message: "Invalid credentials" });
         }
+        const user = await userModel.findOne({ email });
         //compare between the password entered by the user during log in if 
         //it matches with the password stored on the database
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
+        const isMatch = await bcrypt.compare(password, user?.password || DUMMY_PASSWORD_HASH);
+        if (!user || !isMatch) {
             return res.json({ success: false, message: "Invalid credentials" })
         }
         const token = createToken(user._id);

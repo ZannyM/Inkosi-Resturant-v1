@@ -144,6 +144,13 @@ The application will be available at:
 - **Admin Dashboard**: http://localhost:5174
 - **API**: http://localhost:4000
 
+The customer and admin apps have separate sign-in screens and fixed development
+ports. If either port is in use, Vite stops instead of silently choosing a
+different port. Stop the old development server and restart the intended app.
+The admin app's **View Client Store** link defaults to the local customer app
+in development and the customer site in production. Set `VITE_CUSTOMER_URL`
+for the admin app if the customer site is hosted elsewhere.
+
 ## 📦 Installation Guide
 
 ### Step 1: Clone the Repository
@@ -309,7 +316,51 @@ Base URL: `http://localhost:4000/api`
 POST   /user/register          Register new user
 POST   /user/login             Login user
 GET    /user/profile           Get user profile (requires auth)
+POST   /auth/login             Login for the admin dashboard
 ```
+
+Admin login accepts `{ "email": "...", "password": "..." }` and returns
+`{ "success": true, "token": "...", "role": "admin", "expiresIn": 900 }`.
+Requests to endpoints marked admin require `Authorization: Bearer <token>`;
+the server verifies the token and checks the user's current database role.
+Customer tokens from `/user/login` cannot be used for admin endpoints.
+
+### Set up an administrator
+
+1. Register the account through the customer app. Registration always creates
+   a `customer`, and its password is hashed using bcrypt.
+2. Back up the database. Using a trusted MongoDB administrator connection and
+   the correct database, assign the role to the intended existing account:
+
+   ```javascript
+   db.users.updateOne(
+     { email: "admin@example.com" },
+     { $set: { role: "admin" } }
+   )
+   ```
+
+   Verify that exactly one document matched. Replace the example email with
+   the account's exact stored email. Never expose role assignment publicly.
+   Existing documents without a role can be explicitly migrated with
+   `db.users.updateMany({ role: { $exists: false } }, { $set: { role: "customer" } })`.
+3. Sign in at `/login` on the admin app. Admin tokens last 15 minutes and are
+   held in memory: refreshing or logging out requires another sign-in. Logout
+   does not revoke a copied token; demoting or deleting the user blocks its
+   subsequent use.
+
+There is currently no staff-management screen; the dashboard's Staff Management
+button is a placeholder. A trusted database administrator manages access in
+the `users` collection. To remove an administrator's access without deleting
+their customer account, set their `role` back to `customer` in the same way.
+Keep database access restricted and verify the account and environment before
+changing a role.
+
+Both login endpoints share a limit of 10 attempts per IP per 15 minutes. The
+default rate-limit store is process-local; use a shared store for multiple
+backend instances. Behind a reverse proxy, set `TRUST_PROXY_HOPS` only after
+verifying the number of trusted hops and preventing direct access to the
+backend. Use HTTPS, protect the signing secret, and restrict administrator
+access; production deployments should also use MFA and audit logging.
 
 ### Food Endpoints
 
@@ -413,6 +464,7 @@ When the store is closed, customers see appropriate notifications:
 | `JWT_SECRET` | Secret key for JWT signing | `your_long_random_string` |
 | `PAYSTACK_SECRET_KEY` | Paystack API secret key | `sk_test_...` |
 | `PORT` | Server port (optional) | `4000` |
+| `TRUST_PROXY_HOPS` | Number of trusted reverse-proxy hops (optional) | `1` |
 
 ### Frontend Configuration
 
