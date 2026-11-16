@@ -1,0 +1,62 @@
+.staff-page {
+  width: min(100%, 1100px);
+  padding: 32px;
+}
+
+.staff-heading, .staff-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.staff-page button, .staff-dialog button {
+  cursor: pointer;
+  padding: 10px 16px;
+}
+
+.staff-table-wrap {
+  overflow-x: auto;
+  margin-top: 24px;
+}
+
+.staff-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.staff-page th, .staff-page td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.staff-dialog {
+  margin: auto;
+  width: min(90vw, 480px);
+  padding: 24px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.staff-dialog::backdrop {
+  background: rgb(0 0 0 / 50%);
+}
+
+.staff-dialog form {
+  display: grid;
+  gap: 10px;
+}
+
+.staff-dialog input, .staff-dialog select {
+  width: 100%;
+  padding: 10px;
+}
+
+.staff-actions {
+  justify-content: flex-end;
+}
+
+.staff-error {
+  color: #b00020;
+}

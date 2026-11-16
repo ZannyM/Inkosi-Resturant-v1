@@ -317,43 +317,48 @@ POST   /user/register          Register new user
 POST   /user/login             Login user
 GET    /user/profile           Get user profile (requires auth)
 POST   /auth/login             Login for the admin dashboard
+POST   /auth/password          Change an admin password
+GET    /staff                  List admin users (staff management permission)
+GET    /staff/roles            List admin roles (staff management permission)
+POST   /staff                  Create an admin user (staff management permission)
+PATCH  /staff/:id/status       Activate or deactivate an admin user
 ```
 
 Admin login accepts `{ "email": "...", "password": "..." }` and returns
-`{ "success": true, "token": "...", "role": "admin", "expiresIn": 900 }`.
+an admin token, role name, permissions, `mustChangePassword`, and `expiresIn`.
 Requests to endpoints marked admin require `Authorization: Bearer <token>`;
-the server verifies the token and checks the user's current database role.
-Customer tokens from `/user/login` cannot be used for admin endpoints.
+the server verifies the token and checks the current admin account and role.
+Customer tokens from `/user/login` are rejected on admin endpoints with 403.
 
 ### Set up an administrator
 
-1. Register the account through the customer app. Registration always creates
-   a `customer`, and its password is hashed using bcrypt.
-2. Back up the database. Using a trusted MongoDB administrator connection and
-   the correct database, assign the role to the intended existing account:
+1. In Atlas, create a separate admin database with a different name from the
+   customer database. Create separate database users: limit the customer
+   database user to the customer database, and the admin database user to the
+   admin database. Back up both databases and protect both sets of credentials.
+2. Set `ADMIN_MONGO_URI` to the admin database connection string and
+   `ADMIN_JWT_SECRET` to a long random secret different from `JWT_SECRET` in the
+   backend environment. Set both locally and on the deployed backend. The backend
+   will not start without these settings and both database connections.
+3. From an interactive terminal in `backend`, run `npm run create-admin`. Enter
+   the first Manager's username, email and password when prompted. Password
+   input is hidden and must be 12-72 UTF-8 bytes. The command creates the
+   preset roles and refuses to run once any admin account exists.
+4. Sign in to the admin app with the new separate account. Existing customer
+   accounts, including any old `role: "admin"` fields, do not grant admin access
+   and are not migrated automatically.
 
-   ```javascript
-   db.users.updateOne(
-     { email: "admin@example.com" },
-     { $set: { role: "admin" } }
-   )
-   ```
+Managers can create staff and activate or deactivate them in **Staff & Roles
+Management**. New staff must change their temporary password at first login.
+Managers have full access; Kitchen Staff can view and update orders only.
+Each request checks the account and its current role. Deactivation invalidates
+existing tokens, including after reactivation; a Manager cannot deactivate
+their own account. Tokens last 15 minutes and are held in memory. Refreshing
+or logging out requires another sign-in; logout does not revoke a copied token.
 
-   Verify that exactly one document matched. Replace the example email with
-   the account's exact stored email. Never expose role assignment publicly.
-   Existing documents without a role can be explicitly migrated with
-   `db.users.updateMany({ role: { $exists: false } }, { $set: { role: "customer" } })`.
-3. Sign in at `/login` on the admin app. Admin tokens last 15 minutes and are
-   held in memory: refreshing or logging out requires another sign-in. Logout
-   does not revoke a copied token; demoting or deleting the user blocks its
-   subsequent use.
-
-There is currently no staff-management screen; the dashboard's Staff Management
-button is a placeholder. A trusted database administrator manages access in
-the `users` collection. To remove an administrator's access without deleting
-their customer account, set their `role` back to `customer` in the same way.
-Keep database access restricted and verify the account and environment before
-changing a role.
+Separate databases and restricted database users reduce exposure from a
+customer-only database credential leak. They do not protect against a
+compromised backend, admin credentials, or cluster-wide administrator access.
 
 Both login endpoints share a limit of 10 attempts per IP per 15 minutes. The
 default rate-limit store is process-local; use a shared store for multiple
@@ -462,6 +467,8 @@ When the store is closed, customers see appropriate notifications:
 |----------|-------------|---------|
 | `MONGO_URI` | MongoDB connection string | `mongodb+srv://user:pass@cluster.mongodb.net/db` |
 | `JWT_SECRET` | Secret key for JWT signing | `your_long_random_string` |
+| `ADMIN_MONGO_URI` | Separate admin database connection string | `mongodb+srv://admin-user:pass@cluster.mongodb.net/inkosi_admin` |
+| `ADMIN_JWT_SECRET` | Separate secret for admin JWTs | `a_different_long_random_string` |
 | `PAYSTACK_SECRET_KEY` | Paystack API secret key | `sk_test_...` |
 | `PORT` | Server port (optional) | `4000` |
 | `TRUST_PROXY_HOPS` | Number of trusted reverse-proxy hops (optional) | `1` |
@@ -500,7 +507,7 @@ Test files are located in `backend/tests/`
 
 ## 🐛 Known Limitations
 
-- Store settings and staff management options in admin dashboard are placeholders
+- Some store settings options in the admin dashboard are placeholders
 - Analytics section not yet implemented
 - Image optimization for uploads not implemented
 

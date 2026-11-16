@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import useAuth from './useAuth'
 import './Login.css'
@@ -7,21 +7,24 @@ import './Login.css'
 export default function Login() {
   const { session, login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
-  if (session?.role === 'admin') return <Navigate to="/featured" replace />
+  if (session) return <Navigate to={session.mustChangePassword ? '/change-password' :
+    session.permissions.includes('catalog:write') ? '/featured' : '/orders'} replace />
 
   async function submit(event) {
     event.preventDefault()
     setError('')
     setBusy(true)
     try {
-      await login(email, password)
+      const result = await login(email, password)
       setPassword('')
-      navigate('/featured', { replace: true })
+      navigate(result.mustChangePassword ? '/change-password' :
+        result.permissions.includes('catalog:write') ? '/featured' : '/orders', { replace: true })
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Login failed')
     } finally {
@@ -36,6 +39,7 @@ export default function Login() {
         <p className="admin-login-brand">Inkosi Restaurant</p>
         <h1>Admin sign in</h1>
         <p className="admin-login-description">Sign in to manage your restaurant.</p>
+        {location.state?.passwordChanged && <p>Your password was changed. Please sign in again.</p>}
         <label htmlFor="admin-email">Email</label>
         <input id="admin-email" type="email" autoComplete="username" value={email}
           onChange={event => setEmail(event.target.value)} required />
