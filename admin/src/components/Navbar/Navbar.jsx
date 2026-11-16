@@ -10,7 +10,7 @@ const customerUrl = import.meta.env.VITE_CUSTOMER_URL ||
 
 const Navbar = ({ url }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, session } = useAuth();
   const [isStoreLive, setIsStoreLive] = useState(true);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -121,9 +121,10 @@ const Navbar = ({ url }) => {
   }
 
   const managerLabel = useMemo(() => {
+    if (session.role !== 'Manager') return session.role;
     const trimmed = managerName.trim();
     return trimmed || 'Manager';
-  }, [managerName]);
+  }, [managerName, session.role]);
 
   return (
     <header className="admin-navbar">
@@ -136,6 +137,7 @@ const Navbar = ({ url }) => {
           type="button"
           className={isStoreLive ? 'store-status-pill live' : 'store-status-pill paused'}
           onClick={handleStoreStatusToggle}
+          disabled={!session.permissions.includes('store:write')}
         >
           <span className="status-dot" />
           {isStoreLive ? 'Store Live' : 'Kitchen Paused'}
@@ -213,13 +215,13 @@ const Navbar = ({ url }) => {
           />
         </form>
 
-        <button
+        {session.permissions.includes('catalog:write') && <button
           type="button"
           className="quick-add-btn"
           onClick={() => navigate('/add')}
         >
           + New Dish
-        </button>
+        </button>}
 
         <div className="profile-menu" ref={profileMenuRef}>
           <button
@@ -249,12 +251,12 @@ const Navbar = ({ url }) => {
 
           {profileOpen && (
             <div className="profile-dropdown">
-              <button type="button" onClick={() => { setProfileOpen(false); toast.info('Store settings page will be added next.'); }}>
+              {session.permissions.includes('store:write') && <button type="button" onClick={() => { setProfileOpen(false); toast.info('Store settings page will be added next.'); }}>
                 Store Settings
-              </button>
-              <button type="button" onClick={() => { setProfileOpen(false); toast.info('Staff management page will be added next.'); }}>
+              </button>}
+              {session.permissions.includes('staff:manage') && <button type="button" onClick={() => { setProfileOpen(false); navigate('/staff'); }}>
                 Staff Management
-              </button>
+              </button>}
               <button type="button" onClick={() => { setProfileOpen(false); window.open(customerUrl, '_blank', 'noopener,noreferrer'); }}>
                 View Client Store
               </button>

@@ -1,7 +1,7 @@
 import express from "express"
 import { addfood, listFood, listFeaturedFood, removeFood, updateFeaturedFood, updateFood } from "../controllers/foodController.js"
 import multer from "multer"
-import verifyAdmin from "../middleware/verifyAdmin.js"
+import verifyAdmin, { requirePermission } from "../middleware/verifyAdmin.js"
 
 const foodRouter = express.Router();
 
@@ -17,12 +17,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-foodRouter.post("/add", verifyAdmin, upload.single("image"), addfood)
+foodRouter.post("/add", verifyAdmin, requirePermission("catalog:write"), upload.single("image"), addfood)
 foodRouter.get("/list",listFood)
 foodRouter.get("/featured", listFeaturedFood)
-foodRouter.post("/feature", verifyAdmin, updateFeaturedFood)
-foodRouter.post("/update", verifyAdmin, updateFood)
-foodRouter.post("/remove", verifyAdmin, removeFood)
+foodRouter.post("/feature", verifyAdmin, requirePermission("catalog:write"), updateFeaturedFood)
+foodRouter.post("/update", verifyAdmin, requirePermission("catalog:write"), updateFood)
+foodRouter.post("/remove", verifyAdmin, requirePermission("catalog:write"), removeFood)
 
 
 

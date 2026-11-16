@@ -4,7 +4,7 @@ import useAuth from './useAuth'
 export default function ProtectedAdminRoute() {
   const { session } = useAuth()
 
-  if (!session || session.role !== 'admin') {
+  if (!session) {
     return <Navigate to="/login" replace />
   }
   return <Outlet />
