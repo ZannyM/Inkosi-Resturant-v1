@@ -105,6 +105,34 @@
   border-bottom-color: var(--gold, #d4af37);
 }
 
+.popup-field-input {
+  position: relative;
+}
+
+.field-input-password {
+  padding-right: 3rem;
+}
+
+.popup-password-toggle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: #787571;
+  cursor: pointer;
+}
+
+.popup-password-toggle:focus-visible {
+  outline: 2px solid var(--gold, #d4af37);
+  outline-offset: -2px;
+}
+
 /* Primary Submit Button */
 .btn-popup-submit {
   width: 100%;

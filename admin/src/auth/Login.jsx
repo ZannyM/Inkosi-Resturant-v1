@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import useAuth from './useAuth'
+import PasswordInput from '../components/PasswordInput/PasswordInput'
 import './Login.css'
 
 export default function Login() {
@@ -44,7 +45,7 @@ export default function Login() {
         <input id="admin-email" type="email" autoComplete="username" value={email}
           onChange={event => setEmail(event.target.value)} required />
         <label htmlFor="admin-password">Password</label>
-        <input id="admin-password" type="password" autoComplete="current-password" value={password}
+        <PasswordInput id="admin-password" autoComplete="current-password" value={password}
           onChange={event => setPassword(event.target.value)} required />
         {error && <p className="admin-login-error" role="alert">{error}</p>}
         <button type="submit" disabled={busy}>{busy ? 'Signing in...' : 'Sign in'}</button>

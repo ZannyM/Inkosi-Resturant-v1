@@ -330,31 +330,73 @@ Requests to endpoints marked admin require `Authorization: Bearer <token>`;
 the server verifies the token and checks the current admin account and role.
 Customer tokens from `/user/login` are rejected on admin endpoints with 403.
 
-### Set up an administrator
+### Create the first Manager
 
-1. In Atlas, create a separate admin database with a different name from the
-   customer database. Create separate database users: limit the customer
-   database user to the customer database, and the admin database user to the
-   admin database. Back up both databases and protect both sets of credentials.
-2. Set `ADMIN_MONGO_URI` to the admin database connection string and
-   `ADMIN_JWT_SECRET` to a long random secret different from `JWT_SECRET` in the
-   backend environment. Set both locally and on the deployed backend. The backend
-   will not start without these settings and both database connections.
-3. From an interactive terminal in `backend`, run `npm run create-admin`. Enter
-   the first Manager's username, email and password when prompted. Password
-   input is hidden and must be 12-72 UTF-8 bytes. The command creates the
-   preset roles and refuses to run once any admin account exists.
-4. Sign in to the admin app with the new separate account. Existing customer
-   accounts, including any old `role: "admin"` fields, do not grant admin access
-   and are not migrated automatically.
+Admin accounts are separate from customer accounts and Atlas database users.
+Existing customer accounts, including old `role: "admin"` fields, do not grant
+admin access and are not migrated automatically.
 
-Managers can create staff and activate or deactivate them in **Staff & Roles
-Management**. New staff must change their temporary password at first login.
-Managers have full access; Kitchen Staff can view and update orders only.
-Each request checks the account and its current role. Deactivation invalidates
-existing tokens, including after reactivation; a Manager cannot deactivate
-their own account. Tokens last 15 minutes and are held in memory. Refreshing
-or logging out requires another sign-in; logout does not revoke a copied token.
+1. In MongoDB Atlas, create a separate admin database with a different name
+   from the customer database, for example `inkosi_admin`. Create separate
+   database users, restricting each user to its own database. Back up both
+   databases and protect their credentials.
+2. In `backend/.env`, set `MONGO_URI` to the customer database and
+   `ADMIN_MONGO_URI` to the admin database. The admin URI must use the admin
+   **database user's** credentials and name the admin database in its path.
+   URL-encode special characters in the username or password (for example,
+   `@` becomes `%40`); keep the `@` separating credentials from hosts.
+   Preserve the connection options supplied by Atlas.
+3. Set `ADMIN_JWT_SECRET` to a long random secret different from `JWT_SECRET`.
+   Set both admin environment variables locally and on the deployed backend.
+   Never commit or share the connection strings, passwords or secrets. The
+   backend requires both databases to be reachable at startup.
+4. If there are **no admin accounts**, run the following from the project root
+   in an interactive terminal:
+
+   ```bash
+   cd backend
+   npm run create-admin
+   ```
+
+   Enter a new dashboard username, a valid email address (for example,
+   `manager@example.com`), and a new dashboard password. These are not the
+   Atlas database user's credentials. The password must be 12-72 UTF-8 bytes;
+   ordinary ASCII characters are one byte each. Input is hidden, so nothing
+   appears while typing. The command creates the Manager and preset roles.
+5. Start the backend and admin app, then sign in to the admin app at `/login`
+   with the new dashboard email and password. Locally, the admin app runs at
+   `http://localhost:5174`.
+
+The bootstrap command refuses to run if **any** admin account already exists,
+even if it is inactive. Use an existing Manager to create more accounts. If no
+Manager can sign in, contact a trusted database administrator to investigate;
+do not delete existing accounts to rerun the command.
+
+### Create additional Managers or Kitchen Staff
+
+1. Sign in to the admin dashboard as a Manager and open **Staff & Roles** or
+   **Staff Management**.
+2. Select **Add admin user**. Enter a username, valid email and temporary
+   password of 12-72 UTF-8 bytes. Admin usernames and emails must be unique
+   within the admin database.
+3. Select **Manager** for full admin access or **Kitchen Staff** to view and
+   update orders only, then select **Create user**.
+4. Share the temporary password securely. The new user signs in with their
+   dashboard email and temporary password and must change it before accessing
+   the dashboard. The first Manager created by the command uses the password
+   chosen at the prompt.
+
+Managers can activate or deactivate other accounts on the staff page. Each
+request checks the current account and role. Deactivation invalidates existing
+tokens, including after reactivation; a Manager cannot deactivate their own
+account. Tokens last 15 minutes and are held in memory. Refreshing or logging
+out requires another sign-in; logout does not revoke a copied token.
+
+If `create-admin` reports an invalid username, email or password, check the
+email format and password length; hidden input does not echo as you type. If
+the admin URI reports a `querySrv` DNS error, check the Atlas hostname and
+credential encoding, then investigate DNS or use an Atlas-provided standard
+connection string if SRV lookups are unavailable.
 
 Separate databases and restricted database users reduce exposure from a
 customer-only database credential leak. They do not protect against a

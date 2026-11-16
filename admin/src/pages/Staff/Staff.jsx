@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import api from '../../auth/api'
+import PasswordInput from '../../components/PasswordInput/PasswordInput'
 import './Staff.css'
 
 function AddAdminModal({ roles, onClose, onCreated }) {
@@ -39,7 +40,7 @@ function AddAdminModal({ roles, onClose, onCreated }) {
         <label htmlFor="staff-email">Email</label>
         <input id="staff-email" type="email" value={email} onChange={event => setEmail(event.target.value)} maxLength={100} required />
         <label htmlFor="staff-password">Temporary password (12-72 UTF-8 bytes)</label>
-        <input id="staff-password" type="password" autoComplete="new-password" value={password}
+        <PasswordInput id="staff-password" label="temporary password" autoComplete="new-password" value={password}
           onChange={event => setPassword(event.target.value)} required />
         <label htmlFor="staff-role">Role</label>
         <select id="staff-role" value={roleId} onChange={event => setRoleId(event.target.value)} required>

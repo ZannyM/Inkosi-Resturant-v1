@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { Eye, EyeOff, X } from 'lucide-react';
 import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
 import './LoginPopup.css';
@@ -113,6 +113,7 @@ const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' 
           />
 
           <Field
+            key={mode}
             label="Password"
             type="password"
             name="password"
@@ -163,18 +164,35 @@ const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' 
 
 // Reusable Field Component
 function Field({ label, name, value, onChange, type = 'text' }) {
+  const [visible, setVisible] = useState(false);
+  const isPassword = type === 'password';
+  const id = `auth-${name}`;
+
   return (
-    <label className="popup-field">
-      <span className="field-caption">{label}</span>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required
-        className="field-input"
-      />
-    </label>
+    <div className="popup-field">
+      <label htmlFor={id} className="field-caption">{label}</label>
+      <div className="popup-field-input">
+        <input
+          id={id}
+          type={isPassword && visible && value ? 'text' : type}
+          name={name}
+          value={value}
+          onChange={event => {
+            if (isPassword && !event.target.value) setVisible(false);
+            onChange(event);
+          }}
+          required
+          className={isPassword ? 'field-input field-input-password' : 'field-input'}
+        />
+        {isPassword && value && (
+          <button type="button" className="popup-password-toggle" aria-controls={id}
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            onClick={() => setVisible(previous => !previous)}>
+            {visible ? <Eye size={20} aria-hidden="true" /> : <EyeOff size={20} aria-hidden="true" />}
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 

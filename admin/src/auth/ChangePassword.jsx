@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import api from './api'
 import useAuth from './useAuth'
+import PasswordInput from '../components/PasswordInput/PasswordInput'
 import './Login.css'
 
 export default function ChangePassword() {
@@ -35,10 +36,10 @@ export default function ChangePassword() {
         <h1>Change your password</h1>
         <p>Replace your temporary password before accessing the dashboard.</p>
         <label htmlFor="current-password">Current password</label>
-        <input id="current-password" type="password" autoComplete="current-password" required
+        <PasswordInput id="current-password" label="current password" autoComplete="current-password" required
           value={currentPassword} onChange={event => setCurrentPassword(event.target.value)} />
         <label htmlFor="new-password">New password (12-72 UTF-8 bytes)</label>
-        <input id="new-password" type="password" autoComplete="new-password" required
+        <PasswordInput id="new-password" label="new password" autoComplete="new-password" required
           value={newPassword} onChange={event => setNewPassword(event.target.value)} />
         {error && <p className="admin-login-error" role="alert">{error}</p>}
         <button type="submit" disabled={busy}>{busy ? 'Saving...' : 'Change password'}</button>
