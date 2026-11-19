@@ -105,6 +105,38 @@
   border-bottom-color: var(--gold, #d4af37);
 }
 
+.field-input-wrap {
+  position: relative;
+}
+
+.field-input-wrap-password .field-input {
+  padding-right: 3rem;
+}
+
+.field-input-wrap-password input::-ms-reveal {
+  display: none;
+}
+
+.field-password-toggle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #787571;
+  cursor: pointer;
+}
+
+.field-password-toggle:focus-visible {
+  outline: 2px solid var(--gold, #d4af37);
+  outline-offset: 2px;
+}
+
 /* Primary Submit Button */
 .btn-popup-submit {
   width: 100%;
