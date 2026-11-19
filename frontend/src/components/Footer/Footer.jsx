@@ -1,13 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Footer.css';
 
 const Footer = () => {
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [showNewsletterSuccess, setShowNewsletterSuccess] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+
+  const handleSocialClick = (e) => {
+    e.preventDefault();
+    setShowComingSoon(true);
+  };
+
+  const handleClose = () => {
+    setShowComingSoon(false);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setNewsletterEmail('');
+    setShowNewsletterSuccess(true);
+    setTimeout(() => setShowNewsletterSuccess(false), 3000);
   };
 
   return (
     <footer className="footer-container">
+      {showComingSoon && (
+        <div className="modal-overlay" onClick={handleClose}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={handleClose}>×</button>
+            <h2>Coming Soon</h2>
+            <p>Social media accounts will be available shortly. Stay tuned!</p>
+          </div>
+        </div>
+      )}
+
       <div className="footer-inner">
         {/* Main Grid Content */}
         <div className="footer-grid">
@@ -37,7 +63,7 @@ const Footer = () => {
           <div className="footer-column">
             <div className="eyebrow footer-heading">Follow</div>
             <div className="footer-social-list">
-              <a href="#" className="footer-social-link">
+              <a href="#" onClick={handleSocialClick} className="footer-social-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="social-icon">
                   <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -45,7 +71,7 @@ const Footer = () => {
                 </svg>
                 Instagram
               </a>
-              <a href="#" className="footer-social-link">
+              <a href="#" onClick={handleSocialClick} className="footer-social-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="social-icon">
                   <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
                 </svg>
@@ -60,11 +86,16 @@ const Footer = () => {
             <p className="newsletter-description">
               Menu changes and quiet news, monthly.
             </p>
+            {showNewsletterSuccess && (
+              <div className="newsletter-success">✓ Added to newsletter successfully!</div>
+            )}
             <form onSubmit={handleSubmit} className="newsletter-form">
               <input
                 type="email"
                 required
                 placeholder="your@email.com"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 className="newsletter-input"
               />
               <button type="submit" className="newsletter-submit">
@@ -81,8 +112,8 @@ const Footer = () => {
             © {new Date().getFullYear()} Inkosi. All rights reserved.
           </p>
           <div className="legal-links">
-            <a href="#" className="legal-link">Privacy</a>
-            <a href="#" className="legal-link">Terms</a>
+            <a href="/privacy" className="legal-link">Privacy</a>
+            <a href="/terms" className="legal-link">Terms</a>
           </div>
         </div>
 

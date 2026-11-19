@@ -14,6 +14,10 @@ body {
 .eyebrow {
   color: #1c1917 !important; 
 }
+
+.footer-container .eyebrow {
+  color: #fbf9f5 !important;
+}
 a {
   text-decoration: none;
   color: inherit;

@@ -1,6 +1,6 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useId } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { Eye, EyeOff, X } from 'lucide-react';
 import axios from 'axios';
 import { StoreContext } from '../../context/StoreContext';
 import './LoginPopup.css';
@@ -113,6 +113,7 @@ const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' 
           />
 
           <Field
+            key={mode}
             label="Password"
             type="password"
             name="password"
@@ -163,18 +164,39 @@ const LoginPopup = ({ setShowLogin, promptMessage = '', redirectAfterLogin = '' 
 
 // Reusable Field Component
 function Field({ label, name, value, onChange, type = 'text' }) {
+  const id = useId();
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === 'password';
+
   return (
-    <label className="popup-field">
-      <span className="field-caption">{label}</span>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required
-        className="field-input"
-      />
-    </label>
+    <div className="popup-field">
+      <label htmlFor={id} className="field-caption">{label}</label>
+      <div className={`field-input-wrap${isPassword ? ' field-input-wrap-password' : ''}`}>
+        <input
+          id={id}
+          type={isPassword && showPassword && value ? 'text' : type}
+          name={name}
+          value={value}
+          onChange={event => {
+            if (isPassword && !event.target.value) setShowPassword(false);
+            onChange(event);
+          }}
+          required
+          className="field-input"
+        />
+        {isPassword && value && (
+          <button
+            type="button"
+            className="field-password-toggle"
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-controls={id}
+            onClick={() => setShowPassword(visible => !visible)}
+          >
+            {showPassword ? <Eye aria-hidden="true" size={20} /> : <EyeOff aria-hidden="true" size={20} />}
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 

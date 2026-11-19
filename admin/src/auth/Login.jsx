@@ -10,6 +10,7 @@ export default function Login() {
   const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -44,8 +45,25 @@ export default function Login() {
         <input id="admin-email" type="email" autoComplete="username" value={email}
           onChange={event => setEmail(event.target.value)} required />
         <label htmlFor="admin-password">Password</label>
-        <input id="admin-password" type="password" autoComplete="current-password" value={password}
-          onChange={event => setPassword(event.target.value)} required />
+        <div className="admin-password-field">
+          <input id="admin-password" type={showPassword && password ? 'text' : 'password'} autoComplete="current-password" value={password}
+            onChange={event => {
+              setPassword(event.target.value)
+              if (!event.target.value) setShowPassword(false)
+            }} required />
+          {password && (
+            <button type="button" className="admin-password-toggle"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-controls="admin-password" onClick={() => setShowPassword(visible => !visible)}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="3" />
+                {!showPassword && <path d="M4 4l16 16" />}
+              </svg>
+            </button>
+          )}
+        </div>
         {error && <p className="admin-login-error" role="alert">{error}</p>}
         <button type="submit" disabled={busy}>{busy ? 'Signing in...' : 'Sign in'}</button>
         <p className="admin-login-help">Need access? Contact the restaurant administrator.</p>

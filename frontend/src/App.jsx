@@ -12,6 +12,8 @@ import Cart from './pages/Cart/Cart';
 import Verify from './pages/Verify/Verify';
 import MyOrders from './pages/MyOrders/MyOrders';
 import Menu from './pages/Menu/Menu';
+import Privacy from './pages/Privacy/Privacy';
+import Terms from './pages/Terms/Terms';
 const CheckOut = lazy(() => import('./pages/CheckOut/CheckOut'));
 import Confirmation from './pages/Confirmation/Confirmation';
 import FoodDetails from './pages/FoodDetails/FoodDetails';
@@ -86,6 +88,8 @@ const App = () => {
             <Route path="/verify" element={<Page title="Payment Verification"><Verify /></Page>} />
             <Route path="/confirmation" element={<Confirmation />} />
             <Route path="/myorders" element={<Page title="My Orders"><MyOrders /></Page>} />
+            <Route path="/privacy" element={<Page title="Privacy Policy"><Privacy /></Page>} />
+            <Route path="/terms" element={<Page title="Terms of Service"><Terms /></Page>} />
           </Routes>
         </div>
 
