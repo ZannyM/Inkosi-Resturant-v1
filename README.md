@@ -429,11 +429,17 @@ POST   /cart/remove            Remove item from cart
 
 ```
 POST   /order/place            Create new order
-POST   /order/verify           Verify payment
+POST   /order/verify           Verify payment with Paystack using the stored transaction reference
+POST   /order/webhook          Receive signed Paystack charge events
 GET    /order/list             Get all orders (admin)
 POST   /order/userorders       Get user's orders
 POST   /order/status           Update order status (admin)
 ```
+
+Configure Paystack to send webhooks to `/api/order/webhook`. The endpoint validates
+the `x-paystack-signature` HMAC using `PAYSTACK_SECRET_KEY` and only marks a
+matching order paid when the reference, amount, and order metadata agree. The
+browser callback is not treated as proof of payment.
 
 ### Store Status Endpoints
 

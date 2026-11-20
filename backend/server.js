@@ -14,6 +14,7 @@ import authRouter from "./routes/authRoute.js"
 import staffRouter from "./routes/staffRoute.js"
 import adminUserModel from "./models/adminUserModel.js"
 import adminRoleModel from "./models/adminRoleModel.js"
+import capturePaystackWebhookBody from "./utils/paystackWebhookBody.js"
 
 if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET must be configured");
@@ -41,7 +42,7 @@ if (!fs.existsSync("uploads")) {
 }
 
 //middleware
-app.use(express.json())
+app.use(express.json({ verify: capturePaystackWebhookBody }))
 app.use(cors())
 
 //api endpoints
