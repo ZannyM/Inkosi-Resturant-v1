@@ -12,11 +12,8 @@ permissions:
   contents: read
 
 jobs:
-  backend:
+  quality:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,54 +23,19 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm ci --prefix backend
+          npm ci --prefix frontend
+          npm ci --prefix admin
 
-      - name: Run tests
-        run: npm test
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
 
-  frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build frontend
-        run: npm run build
-
-  admin:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: admin
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: admin/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build admin
-        run: npm run build
+      - name: Run lint, tests, and builds
+        run: npm run check
+        env:
+          PAYSTACK_E2E_SECRET_KEY: ${{ secrets.PAYSTACK_E2E_SECRET_KEY }}

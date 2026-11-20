@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Navbar from './components/Navbar/Navbar';
@@ -45,30 +45,30 @@ const App = () => {
       return;
     }
 
+    if (location.state?.openLogin) {
+      navigate(location.pathname, { replace: true, state: {} });
+    }
     setShowLogin(false);
     setLoginPromptMessage('');
     setRedirectAfterLogin('');
   };
 
-  useEffect(() => {
-    if (!location.state?.openLogin) return;
-
-    openLoginPrompt(
-      location.state.promptMessage || '',
-      location.state.redirectAfterLogin || ''
-    );
-
-    // Clear route state after consuming the login intent.
-    navigate(location.pathname, { replace: true, state: {} });
-  }, [location.pathname, location.state, navigate]);
+  const routeLoginPrompt = Boolean(location.state?.openLogin);
+  const shouldShowLogin = showLogin || routeLoginPrompt;
+  const displayedPromptMessage = routeLoginPrompt
+    ? location.state.promptMessage || ''
+    : loginPromptMessage;
+  const displayedRedirectAfterLogin = routeLoginPrompt
+    ? location.state.redirectAfterLogin || ''
+    : redirectAfterLogin;
 
   return (
     <>
-      {showLogin && (
+      {shouldShowLogin && (
         <LoginPopup
           setShowLogin={handleSetShowLogin}
-          promptMessage={loginPromptMessage}
-          redirectAfterLogin={redirectAfterLogin}
+          promptMessage={displayedPromptMessage}
+          redirectAfterLogin={displayedRedirectAfterLogin}
         />
       )}
      

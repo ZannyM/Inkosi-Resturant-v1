@@ -448,6 +448,43 @@ GET    /store/status           Get store status
 POST   /store/status           Update store status (admin)
 ```
 
+## Lint and Test Checks
+
+Install dependencies and the Playwright browser from the repository root:
+
+```powershell
+npm ci
+npm ci --prefix backend
+npm ci --prefix frontend
+npm ci --prefix admin
+npx playwright install chromium
+```
+
+Run the same validation command locally and in GitHub Actions:
+
+```powershell
+$env:PAYSTACK_E2E_SECRET_KEY = "sk_test_..."
+npm run check
+```
+
+`npm run check` runs the configured frontend/admin linters, backend and frontend
+tests, Playwright E2E tests, and frontend/admin builds. The admin browser flows
+use API fixtures. The customer checkout test performs a real Paystack test-mode
+transaction and uses Paystack's documented test card `4084 0840 8408 4081`,
+CVV `408`, and a future expiry date. The checkout test is skipped if
+`PAYSTACK_E2E_SECRET_KEY` is unset. Use a test-mode `sk_test_` key only; add it
+as a repository Actions secret to run that checkout flow in CI.
+
+The frontend and admin lint checks are clean. Without
+`PAYSTACK_E2E_SECRET_KEY`, the checkout flow is skipped while the remaining
+checks still run.
+
+To run tests without linting/building:
+
+```powershell
+npm run test:all
+```
+
 ## 🏪 Operating Rules
 
 Orders are accepted only when **both** conditions are true:

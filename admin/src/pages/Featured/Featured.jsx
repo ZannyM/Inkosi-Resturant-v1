@@ -1,26 +1,29 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import axios from '../../auth/api';
 import { toast } from 'react-toastify';
 import './Featured.css';
 
 const MAX_FEATURED_DISHES = 4;
 
+const loadFoods = async (url) => {
+  const response = await axios.get(`${url}/api/food/featured`);
+  if (!response?.data?.success) {
+    throw new Error(response?.data?.message || 'Failed to load dishes');
+  }
+  return response.data.data || [];
+};
+
 const Featured = ({ url }) => {
   const [foods, setFoods] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchFoods = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${url}/api/food/featured`);
-      if (response?.data?.success) {
-        setFoods(response.data.data || []);
-      } else {
-        toast.error(response?.data?.message || 'Failed to load dishes');
-      }
+      setFoods(await loadFoods(url));
     } catch (error) {
       console.error(error);
-      toast.error('Failed to load dishes');
+      toast.error(error.message || 'Failed to load dishes');
     } finally {
       setLoading(false);
     }
@@ -59,8 +62,21 @@ const Featured = ({ url }) => {
   };
 
   useEffect(() => {
-    fetchFoods();
-  }, []);
+    let active = true;
+    loadFoods(url).then((data) => {
+      if (active) setFoods(data);
+    }).catch((error) => {
+      if (!active) return;
+      console.error(error);
+      toast.error(error.message || 'Failed to load dishes');
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [url]);
 
   return (
     <section className="featured-page add">

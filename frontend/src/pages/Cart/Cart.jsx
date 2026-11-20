@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import './Cart.css'
-import { StoreContext } from '../../context/StoreContext'
+import { StoreContext } from '../../context/storeContext'
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
@@ -59,7 +59,7 @@ const Cart = () => {
         );
         return;
       }
-    } catch (error) {
+    } catch {
       // Backend will still enforce closure at place-order time.
     }
 

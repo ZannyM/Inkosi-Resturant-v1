@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import "./Navbar.css"
 import axios from '../../auth/api'
 import useAuth from '../../auth/useAuth'
@@ -14,7 +14,7 @@ const Navbar = ({ url }) => {
   const [isStoreLive, setIsStoreLive] = useState(true);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [managerName, setManagerName] = useState('Manager');
+  const [managerName] = useState(() => localStorage.getItem('adminManagerName') || 'Manager');
   const [searchValue, setSearchValue] = useState('');
   const [orderAlerts, setOrderAlerts] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
@@ -22,53 +22,53 @@ const Navbar = ({ url }) => {
   const profileMenuRef = useRef(null);
   const notificationRef = useRef(null);
 
-  const fetchStoreStatus = async () => {
-    try {
-      const response = await axios.get(`${url}/api/store/status`);
-      if (response.data.success) {
-        setIsStoreLive(response.data.data.isStoreLive);
-      }
-    } catch (error) {
-      toast.error('Could not fetch store status');
+  const fetchStoreStatus = useCallback(async () => {
+    const response = await axios.get(`${url}/api/store/status`);
+    return response.data.success ? response.data.data.isStoreLive : null;
+  }, [url]);
+
+  const fetchLiveAlerts = useCallback(async () => {
+    const response = await axios.get(`${url}/api/order/list`);
+    if (!response.data.success) {
+      return null;
     }
-  }
 
-  const fetchLiveAlerts = async () => {
-    try {
-      const response = await axios.get(`${url}/api/order/list`);
-      if (!response.data.success) {
-        return;
-      }
-
-      const processingOrders = response.data.data
-        .filter((order) => {
-          const status = (order.status || '').toLowerCase();
-          return status === 'food processing' || status === 'food proocessing';
-        })
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      setNotificationCount(processingOrders.length);
-      setOrderAlerts(processingOrders.slice(0, 6));
-    } catch (error) {
-      // no-op to avoid toast noise during polling
-    }
-  }
+    return response.data.data
+      .filter((order) => {
+        const status = (order.status || '').toLowerCase();
+        return status === 'food processing' || status === 'food proocessing';
+      })
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+  }, [url]);
 
   useEffect(() => {
-    const savedManagerName = localStorage.getItem('adminManagerName');
-    if (savedManagerName) {
-      setManagerName(savedManagerName);
-    }
+    let active = true;
+    const loadStoreStatus = () => {
+      fetchStoreStatus().then((isLive) => {
+        if (active && isLive !== null) setIsStoreLive(isLive);
+      }).catch(() => {
+        if (active) toast.error('Could not fetch store status');
+      });
+    };
+    const loadLiveAlerts = () => {
+      fetchLiveAlerts().then((processingOrders) => {
+        if (!active || !processingOrders) return;
+        setNotificationCount(processingOrders.length);
+        setOrderAlerts(processingOrders.slice(0, 6));
+      }).catch(() => {
+        // Avoid toast noise during polling.
+      });
+    };
 
-    fetchStoreStatus();
-    fetchLiveAlerts();
+    loadStoreStatus();
+    loadLiveAlerts();
+    const intervalId = setInterval(loadLiveAlerts, 20000);
 
-    const intervalId = setInterval(() => {
-      fetchLiveAlerts();
-    }, 20000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+    return () => {
+      active = false;
+      clearInterval(intervalId);
+    };
+  }, [fetchLiveAlerts, fetchStoreStatus]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -97,7 +97,7 @@ const Navbar = ({ url }) => {
       } else {
         toast.error(response.data.message || 'Could not update store status');
       }
-    } catch (error) {
+    } catch {
       toast.error('Could not update store status');
     }
   }

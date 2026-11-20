@@ -15,7 +15,8 @@ globalThis.alert = () => {};
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const vite = await createServer({ root: fileURLToPath(new URL("../../", import.meta.url)), server: { middlewareMode: true }, appType: "custom", logLevel: "silent" });
-const { StoreContext, default: Provider } = await vite.ssrLoadModule("/src/context/StoreContext.jsx");
+const { default: Provider } = await vite.ssrLoadModule("/src/context/StoreContext.jsx");
+const { StoreContext } = await vite.ssrLoadModule("/src/context/storeContext.js");
 const originalGet = axios.get;
 const originalPost = axios.post;
 after(async () => {
