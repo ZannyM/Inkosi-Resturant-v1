@@ -144,6 +144,45 @@ The application will be available at:
 - **Admin Dashboard**: http://localhost:5174
 - **API**: http://localhost:4000
 
+### Optional: seed demo data
+
+Use a dedicated demo database in `backend/.env`; never seed a production database.
+From an interactive terminal, run:
+
+```bash
+npm run seed:demo --prefix backend
+```
+
+Confirm the displayed database name, then enter an email and password for the
+demo customer. The script creates four demo dishes and copies their images to
+`backend/uploads`. It features new dishes only while featured slots are available.
+Rerunning it leaves existing demo dishes and an existing account with the same
+email unchanged; it does not reset that account's password. The separate admin
+account is not created by this command; see [Set up an administrator](#set-up-an-administrator).
+
+### Optional: create a demo admin account
+
+Use a dedicated demo admin database, separate from the demo customer database.
+Configure `MONGO_URI` and `ADMIN_MONGO_URI` in `backend/.env` to point to
+databases with different names. Set `ADMIN_JWT_SECRET` to a long random secret
+that differs from `JWT_SECRET`.
+
+From an interactive terminal at the project root, run:
+
+```bash
+npm run create-admin --prefix backend
+```
+
+Enter a username, email and password when prompted. The password is hidden
+while typing and must be 12-72 UTF-8 bytes. The command creates the preset
+admin roles and the first Manager account; no default credentials are provided.
+Sign in to the admin app using the email and password you chose.
+
+The command refuses to run if an admin account already exists; an existing
+Manager can create additional accounts through **Staff & Roles Management**.
+See [Set up an administrator](#set-up-an-administrator) for database access
+and security requirements.
+
 The customer and admin apps have separate sign-in screens and fixed development
 ports. If either port is in use, Vite stops instead of silently choosing a
 different port. Stop the old development server and restart the intended app.
@@ -390,11 +429,17 @@ POST   /cart/remove            Remove item from cart
 
 ```
 POST   /order/place            Create new order
-POST   /order/verify           Verify payment
+POST   /order/verify           Verify payment with Paystack using the stored transaction reference
+POST   /order/webhook          Receive signed Paystack charge events
 GET    /order/list             Get all orders (admin)
 POST   /order/userorders       Get user's orders
 POST   /order/status           Update order status (admin)
 ```
+
+Configure Paystack to send webhooks to `/api/order/webhook`. The endpoint validates
+the `x-paystack-signature` HMAC using `PAYSTACK_SECRET_KEY` and only marks a
+matching order paid when the reference, amount, and order metadata agree. The
+browser callback is not treated as proof of payment.
 
 ### Store Status Endpoints
 

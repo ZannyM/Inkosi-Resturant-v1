@@ -1,0 +1,14 @@
+{
+  "event": "charge.success",
+  "data": {
+    "id": 123456789,
+    "status": "success",
+    "reference": "order_507f1f77bcf86cd799439013_1736935200000",
+    "amount": 12500,
+    "currency": "ZAR",
+    "metadata": {
+      "orderId": "507f1f77bcf86cd799439013",
+      "userId": "507f1f77bcf86cd799439012"
+    }
+  }
+}

@@ -2,6 +2,24 @@ import orderModel from "../models/orderModel.js";
 import userModel from '../models/userModel.js'
 import storeSettingsModel from "../models/storeSettingsModel.js";
 import { OPERATING_HOURS_LABEL, isWithinOperatingHours } from "../utils/storeHours.js";
+import mongoose from "mongoose";
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+const isSuccessfulPaystackTransaction = (order, transaction) => {
+    const expectedAmount = Math.round(Number(order.amount) * 100);
+    return transaction?.status === "success" &&
+        transaction.reference === order.paystackReference &&
+        Number.isSafeInteger(expectedAmount) &&
+        expectedAmount > 0 &&
+        transaction.amount === expectedAmount &&
+        String(transaction.metadata?.orderId || "") === String(order._id);
+};
+
+const markOrderPaid = async (order) => orderModel.findOneAndUpdate(
+    { _id: order._id, paystackReference: order.paystackReference },
+    { $set: { payment: true } },
+    { new: true }
+);
 
 //Placing user order from frontend
 const placeOrder = async (req, res) => {
@@ -87,21 +105,94 @@ const placeOrder = async (req, res) => {
 
 }
 const verifyOrder = async (req, res) => {
-    const { orderId, success } = req.body;
-    try {
-        if (success == "true") {
-            await orderModel.findByIdAndUpdate(orderId, { payment: true });
-            res.json({ success: true, message: "Paid" })
-        }else{
-            await orderModel.findByIdAndDelete(orderId);
-            res.json({success:false,message:"Not Paid"})
-        }
-    } catch (error) {
-        console.log("error");
-        res.json({success:false, message:"Error processing payment verification"})
+    const { orderId } = req.body || {};
+    if (typeof orderId !== "string" || !mongoose.isValidObjectId(orderId)) {
+        return res.status(400).json({ success: false, message: "Invalid order id" });
     }
 
-}
+    try {
+        const order = await orderModel.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
+        }
+        if (order.payment) return res.json({ success: true, message: "Paid" });
+        if (!order.paystackReference) {
+            return res.status(409).json({ success: false, message: "Order has no payment reference" });
+        }
+
+        const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
+        if (!paystackSecretKey) {
+            return res.status(503).json({ success: false, message: "Payment verification is unavailable" });
+        }
+
+        const paystackResponse = await fetch(
+            `https://api.paystack.co/transaction/verify/${encodeURIComponent(order.paystackReference)}`,
+            { headers: { Authorization: `Bearer ${paystackSecretKey}` } }
+        );
+        const verification = await paystackResponse.json();
+        if (!paystackResponse.ok || verification.status !== true) {
+            console.error("Paystack transaction verification failed:", verification.message || paystackResponse.status);
+            return res.status(502).json({ success: false, message: "Payment verification is unavailable" });
+        }
+        if (!isSuccessfulPaystackTransaction(order, verification.data)) {
+            return res.json({ success: false, message: "Payment could not be verified" });
+        }
+
+        const updatedOrder = await markOrderPaid(order);
+        if (!updatedOrder) {
+            return res.status(409).json({ success: false, message: "Order payment state changed" });
+        }
+        return res.json({ success: true, message: "Paid" });
+    } catch (error) {
+        console.error("Paystack transaction verification error:", error);
+        return res.status(502).json({ success: false, message: "Payment verification is unavailable" });
+    }
+};
+
+const paystackWebhook = async (req, res) => {
+    const secret = process.env.PAYSTACK_SECRET_KEY;
+    const signature = req.get("x-paystack-signature");
+    if (!secret) {
+        return res.status(503).json({ success: false, message: "Payment webhook is unavailable" });
+    }
+    if (!Buffer.isBuffer(req.rawBody) || typeof signature !== "string" ||
+        !/^[a-f\d]{128}$/i.test(signature)) {
+        return res.status(401).json({ success: false, message: "Invalid webhook signature" });
+    }
+
+    const expectedSignature = createHmac("sha512", secret).update(req.rawBody).digest();
+    const receivedSignature = Buffer.from(signature, "hex");
+    if (!timingSafeEqual(expectedSignature, receivedSignature)) {
+        return res.status(401).json({ success: false, message: "Invalid webhook signature" });
+    }
+
+    const { event, data } = req.body || {};
+    if (event !== "charge.success") {
+        return res.status(200).json({ success: true, received: true });
+    }
+    if (typeof data?.reference !== "string" || data.status !== "success") {
+        return res.status(400).json({ success: false, message: "Invalid successful charge event" });
+    }
+
+    try {
+        const order = await orderModel.findOne({ paystackReference: data.reference });
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found for payment reference" });
+        }
+        if (!isSuccessfulPaystackTransaction(order, data)) {
+            return res.status(400).json({ success: false, message: "Payment does not match the order" });
+        }
+
+        const updatedOrder = await markOrderPaid(order);
+        if (!updatedOrder) {
+            return res.status(409).json({ success: false, message: "Order payment state changed" });
+        }
+        return res.status(200).json({ success: true, received: true });
+    } catch (error) {
+        console.error("Paystack webhook processing failed:", error);
+        return res.status(500).json({ success: false, message: "Webhook processing failed" });
+    }
+};
 //user orders for frontend
 const userOrders = async (req,res) =>{
     try {
@@ -146,4 +237,4 @@ const updateStatus = async (req,res) =>{
     }
 }
 
-export { placeOrder, verifyOrder,userOrders, listOrders, updateStatus }
+export { placeOrder, verifyOrder, paystackWebhook, userOrders, listOrders, updateStatus }
