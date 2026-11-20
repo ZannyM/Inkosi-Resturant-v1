@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
-import { StoreContext } from '../../context/StoreContext';
+import { StoreContext } from '../../context/storeContext';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Home' },

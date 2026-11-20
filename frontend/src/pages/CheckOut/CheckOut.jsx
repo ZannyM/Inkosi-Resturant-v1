@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Lock, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
-import { StoreContext } from '../../context/StoreContext';
+import { StoreContext } from '../../context/storeContext';
 import './CheckOut.css';
 import RestaurantClosedPopup from '../../components/RestaurantClosedPopup/RestaurantClosedPopup';
 import { citiesForProvince, provinces, validateCheckout } from './checkoutValidation';
@@ -93,7 +93,7 @@ const CheckOut = () => {
         );
         return false;
       }
-    } catch (error) {
+    } catch {
       // If status check fails, backend /place endpoint still enforces closure.
     }
 

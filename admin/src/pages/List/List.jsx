@@ -151,7 +151,7 @@ const List = ({ url }) => {
       } else {
         toast.error(response.data.message || "Error updating food item")
       }
-    } catch (error) {
+    } catch {
       toast.error("Error updating food item")
     } finally {
       setIsUpdating(false);
@@ -159,8 +159,22 @@ const List = ({ url }) => {
   }
 
   useEffect(() => {
-    fetchList();
-  }, [])
+    let active = true;
+    axios.get(`${apiUrl}/api/food/list`).then((response) => {
+      if (!active) return;
+      if (response.data.success) {
+        setList(response.data.data);
+      } else {
+        toast.error("Error fetching list");
+      }
+    }).catch(() => {
+      if (active) toast.error("Error fetching list");
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [apiUrl])
 
   return (
     <div className='list add flex-col'>

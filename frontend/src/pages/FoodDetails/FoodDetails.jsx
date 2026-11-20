@@ -1,7 +1,7 @@
-import React, { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { StoreContext } from '../../context/StoreContext';
+import { StoreContext } from '../../context/storeContext';
 import { SPICE_LEVELS } from '../../assets/foodOptions';
 import './FoodDetails.css';
 

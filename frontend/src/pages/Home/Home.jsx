@@ -1,4 +1,3 @@
-import React from 'react'
 import './Home.css'
 import Header from '../../components/Header/Header'
 import FoodDisplay from '../../components/FoodDisplay/FoodDisplay'

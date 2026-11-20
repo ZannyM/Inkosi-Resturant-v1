@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import "./Add.css"
 import { assets } from '../../assets/assets'
 import axios from '../../auth/api'

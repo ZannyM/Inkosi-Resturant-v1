@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StoreContext } from '../../context/StoreContext';
+import { StoreContext } from '../../context/storeContext';
 import './CartDrawer.css';
 import axios from 'axios';
 import RestaurantClosedPopup from '../RestaurantClosedPopup/RestaurantClosedPopup';
@@ -71,7 +71,7 @@ export function CartDrawer({ drawerOpen = false, setDrawerOpen = () => { }, open
         );
         return;
       }
-    } catch (error) {
+    } catch {
       // Backend will still enforce closure at place-order time.
     }
 

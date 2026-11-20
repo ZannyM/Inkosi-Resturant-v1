@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo, useContext } from 'react'
+import { useEffect, useMemo, useContext } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import './Menu.css'
 import FoodItem from '../../components/FoodItem/FoodItem'
-import { StoreContext } from '../../context/StoreContext' // 1. Import StoreContext
+import { StoreContext } from '../../context/storeContext'
 
 const TABS = ["All", "Salads", "Rolls", "Pasta", "Noodles", "Sandwiches", "Desserts", "Drinks"];
 
@@ -25,22 +25,13 @@ const Menu = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const rawUrlParam = searchParams.get('category') || "All";
-  const [category, setCategory] = useState(normalizeCategory(rawUrlParam));
+  const category = normalizeCategory(searchParams.get('category'));
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(() => {
-    const currentParam = searchParams.get('category');
-    if (currentParam) {
-      setCategory(normalizeCategory(currentParam));
-    }
-  }, [searchParams]);
-
   const handleTabChange = (selectedTab) => {
-    setCategory(selectedTab);
     setSearchParams({ category: selectedTab });
   };
 

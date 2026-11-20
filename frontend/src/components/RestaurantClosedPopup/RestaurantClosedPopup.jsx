@@ -1,4 +1,3 @@
-import React from 'react';
 import './RestaurantClosedPopup.css';
 
 const RestaurantClosedPopup = ({ open, onClose, message, operatingHours }) => {

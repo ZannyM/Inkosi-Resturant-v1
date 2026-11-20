@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './MyOrders.css'; // Make sure this imports MyOrders.css
-import { StoreContext } from '../../context/StoreContext';
+import { StoreContext } from '../../context/storeContext';
 import axios from 'axios';
 
 const StatusBadge = ({ status }) => {
@@ -16,29 +16,43 @@ const StatusBadge = ({ status }) => {
 
 const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
-  const [data, setData] = useState(null); // null represents loading state
+  const [orders, setOrders] = useState({ token: '', data: null });
+  const data = token ? (orders.token === token ? orders.data : null) : [];
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (requestToken = token) => {
     try {
       const response = await axios.post(
         url + "/api/order/userorders",
         {},
-        { headers: { token } }
+        { headers: { token: requestToken } }
       );
-      setData(response.data.data);
+      setOrders({ token: requestToken, data: response.data.data });
     } catch (error) {
       console.error("Error fetching orders:", error);
-      setData([]);
+      setOrders({ token: requestToken, data: [] });
     }
   };
 
   useEffect(() => {
-    if (token) {
-      fetchOrders();
-    } else {
-      setData([]);
-    }
-  }, [token]);
+    if (!token) return undefined;
+
+    let active = true;
+    axios.post(
+      url + "/api/order/userorders",
+      {},
+      { headers: { token } }
+    ).then((response) => {
+      if (active) setOrders({ token, data: response.data.data });
+    }).catch((error) => {
+      if (!active) return;
+      console.error("Error fetching orders:", error);
+      setOrders({ token, data: [] });
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [token, url]);
 
   return (
     <div className="orders-page">

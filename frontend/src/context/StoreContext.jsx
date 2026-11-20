@@ -1,7 +1,6 @@
 import axios from "axios";
-import { createContext, useState, useEffect, useRef } from "react";
-
-export const StoreContext = createContext(null);
+import { useState, useEffect, useRef } from "react";
+import { StoreContext } from "./storeContext.js";
 
 const GUEST_CART = "guestCartItems";
 const GUEST_SAVED = "guestSavedItems";

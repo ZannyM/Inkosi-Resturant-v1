@@ -1,4 +1,3 @@
-import React from 'react'
 import './ServiceHighlights.css'
 import food4 from '../../assets/food_4.png'
 import food8 from '../../assets/food_8.png'

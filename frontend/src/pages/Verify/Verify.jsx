@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import "./Verify.css";
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { StoreContext } from '../../context/StoreContext';
+import { StoreContext } from '../../context/storeContext';
 import axios from 'axios';
 
 const Verify = () => {
@@ -13,7 +13,7 @@ const Verify = () => {
     const { url } = useContext(StoreContext);
     const navigate = useNavigate();
 
-    const verifyPayment = async () => {
+    const verifyPayment = useCallback(async () => {
         if (!orderId || success === null) {
             navigate("/checkout", {
                 replace: true,
@@ -37,7 +37,7 @@ const Verify = () => {
                     }
                 });
             }
-        } catch (error) {
+        } catch {
             navigate("/checkout", {
                 replace: true,
                 state: {
@@ -46,11 +46,11 @@ const Verify = () => {
                 }
             });
         }
-    };
+    }, [orderId, success, url, navigate]);
 
     useEffect(() => {
         verifyPayment();
-    }, []);
+    }, [verifyPayment]);
 
 
     return (

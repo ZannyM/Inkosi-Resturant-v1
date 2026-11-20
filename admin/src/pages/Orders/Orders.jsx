@@ -1,4 +1,3 @@
-import React from 'react'
 import "./Orders.css"
 import { useState } from 'react'
 import { toast } from 'react-toastify'
@@ -35,7 +34,7 @@ const Orders = ({ url }) => {
       } else {
         toast.error("Error fetching orders")
       }
-    } catch (error) {
+    } catch {
       toast.error("Error fetching orders")
     }
   }
@@ -51,7 +50,7 @@ const Orders = ({ url }) => {
       }else{
         toast.error("Error updating order status")
       }
-    } catch (error) {
+    } catch {
       toast.error("Error updating order status")
     }
   }
@@ -79,8 +78,24 @@ const Orders = ({ url }) => {
   });
 
   useEffect(() => {
-    fetchAllOrders(selectedStatus);
-  }, [selectedStatus])
+    let active = true;
+    axios.get(url + "/api/order/list", {
+      params: { status: selectedStatus }
+    }).then((response) => {
+      if (!active) return;
+      if (response.data.success) {
+        setOrders(response.data.data);
+      } else {
+        toast.error("Error fetching orders");
+      }
+    }).catch(() => {
+      if (active) toast.error("Error fetching orders");
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [selectedStatus, url])
 
   return (
     <div className='order add'>
